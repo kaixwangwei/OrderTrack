@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 public class AddNewExpressActivity extends AppCompatActivity implements View.OnClickListener {
@@ -22,6 +23,7 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
     private EditText mRecipientEdit;
     private EditText mSendExpressDateEdit;
     private EditText mExpressMoneyEdit;
+    private ExpressDBHelper mExpressDBHelper;
 
     @Override
     public void onCreate(Bundle state) {
@@ -29,6 +31,7 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
         setContentView(R.layout.add_new_express);
         setupToolbar();
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
+        mExpressDBHelper = ExpressDBHelper.getInstance(this);
         initView();
     }
 
@@ -98,6 +101,14 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
         String sendExpressDate = mSendExpressDateEdit.getText().toString();
         String money = mExpressMoneyEdit.getText().toString();
         Log.d(TAG, "AddExpressItem:expressCode:" + expressCode + ",recipter:"+ recipter + ",sendExpressDate:" + sendExpressDate + ",money:" + money);
+        ExpressInfo expressInfo = new ExpressInfo(expressCode);
+
+        long id = mExpressDBHelper.insert(expressInfo);
+        if(id > 0) {
+            finish();
+        } else {
+            Toast.makeText(this, R.string.insert_express_fail, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void startScalingScanner()

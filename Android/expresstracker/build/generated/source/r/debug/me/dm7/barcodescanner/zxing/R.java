@@ -22,13 +22,13 @@ public final class R {
         public static final int squaredFinder = 0x7f0100ab;
     }
     public static final class color {
-        public static final int viewfinder_border = 0x7f0c004f;
-        public static final int viewfinder_laser = 0x7f0c0050;
-        public static final int viewfinder_mask = 0x7f0c0051;
+        public static final int viewfinder_border = 0x7f0b004f;
+        public static final int viewfinder_laser = 0x7f0b0050;
+        public static final int viewfinder_mask = 0x7f0b0051;
     }
     public static final class integer {
-        public static final int viewfinder_border_length = 0x7f090000;
-        public static final int viewfinder_border_width = 0x7f090001;
+        public static final int viewfinder_border_length = 0x7f080000;
+        public static final int viewfinder_border_width = 0x7f080001;
     }
     public static final class styleable {
         public static final int[] BarcodeScannerView = { 0x7f0100a2, 0x7f0100a3, 0x7f0100a4, 0x7f0100a5, 0x7f0100a6, 0x7f0100a7, 0x7f0100a8, 0x7f0100a9, 0x7f0100aa, 0x7f0100ab, 0x7f0100ac, 0x7f0100ad };

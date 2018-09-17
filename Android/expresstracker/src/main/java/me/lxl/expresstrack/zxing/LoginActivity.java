@@ -78,9 +78,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mCheckBox.setOnClickListener(this);
         mUSerName = (EditText) findViewById(R.id.mUserName);
         mPassWord = (EditText) findViewById(R.id.mPassWord);
-        mUSerName.setText(mSharedPreferences.getString("username", ""));
-        mPassWord.setText(mSharedPreferences.getString("password", ""));
+        String userName = mSharedPreferences.getString("username", "");
+        String passWord = mSharedPreferences.getString("password", "");
+        mUSerName.setText(userName);
+        mPassWord.setText(passWord);
         mCheckBox.setChecked(mSharedPreferences.getBoolean("savepassword", false));
+        if(passWord != "" && userName != "") {
+            showDiag();
+            LoginThread login = new LoginThread(this, mHandler, passWord, userName);
+            login.start();
+        }
     }
 
     public void launchAddNewExpress(View v) {
@@ -177,7 +184,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         login.start();
     }
 
-    private static class MyHandler extends Handler {
+    private class MyHandler extends Handler {
 
         //对Activity的弱引用
         private final Context mActivity;
@@ -194,6 +201,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Intent intent = new Intent(mActivity, MainActivity.class);
                     mActivity.startActivity(intent);
                     mPdialog.dismiss();
+                    LoginActivity.this.finish();
                     break;
                 case LOGIN_FAIL:
                     if (mPdialog != null && mPdialog.isShowing()) {

@@ -40,6 +40,7 @@
     <string name="user_pass_input_fail">用户名，密码不能为空，且字符不能超过16位!请重新输入。</string>
     <string name="login_fail">登录失败，请稍后再试。</string>
     <string name="login_success">登录成功。</string>
+    <string name="insert_express_fail">插入数据失败，请重试。</string>
 
 
 </resources>

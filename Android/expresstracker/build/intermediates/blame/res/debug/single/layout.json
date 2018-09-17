@@ -24,6 +24,10 @@
         "source": "/home/pmcb2bts08/.android/build-cache/c3aeabeb08f3de0a180a774396dbb2e10afd892b/output/res/layout/notification_action_tombstone.xml"
     },
     {
+        "merged": "/home/pmcb2bts08/python/OrderTrack/Android/expresstracker/build/intermediates/res/merged/debug/layout/express_item.xml",
+        "source": "/home/pmcb2bts08/python/OrderTrack/Android/expresstracker/src/main/res/layout/express_item.xml"
+    },
+    {
         "merged": "/home/pmcb2bts08/python/OrderTrack/Android/expresstracker/build/intermediates/res/merged/debug/layout/abc_alert_dialog_material.xml",
         "source": "/home/pmcb2bts08/.android/build-cache/c3aeabeb08f3de0a180a774396dbb2e10afd892b/output/res/layout/abc_alert_dialog_material.xml"
     },
@@ -44,12 +48,12 @@
         "source": "/home/pmcb2bts08/.android/build-cache/c3aeabeb08f3de0a180a774396dbb2e10afd892b/output/res/layout/abc_popup_menu_item_layout.xml"
     },
     {
-        "merged": "/home/pmcb2bts08/python/OrderTrack/Android/expresstracker/build/intermediates/res/merged/debug/layout/login_activity.xml",
-        "source": "/home/pmcb2bts08/python/OrderTrack/Android/expresstracker/src/main/res/layout/login_activity.xml"
-    },
-    {
         "merged": "/home/pmcb2bts08/python/OrderTrack/Android/expresstracker/build/intermediates/res/merged/debug/layout/design_navigation_menu.xml",
         "source": "/home/pmcb2bts08/.android/build-cache/e457f532f96f6eba523aeefff52132bc88361de4/output/res/layout/design_navigation_menu.xml"
+    },
+    {
+        "merged": "/home/pmcb2bts08/python/OrderTrack/Android/expresstracker/build/intermediates/res/merged/debug/layout/login_activity.xml",
+        "source": "/home/pmcb2bts08/python/OrderTrack/Android/expresstracker/src/main/res/layout/login_activity.xml"
     },
     {
         "merged": "/home/pmcb2bts08/python/OrderTrack/Android/expresstracker/build/intermediates/res/merged/debug/layout/activity_custom_view_finder_scanner.xml",
