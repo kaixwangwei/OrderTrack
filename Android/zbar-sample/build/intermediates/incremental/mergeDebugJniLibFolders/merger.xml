@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/home/pmcb2bts08/mycode/barcodescanner-master/zbar-sample/src/main/jniLibs"/></dataSet><dataSet config="debug"><source path="/home/pmcb2bts08/mycode/barcodescanner-master/zbar-sample/src/debug/jniLibs"/></dataSet></merger>

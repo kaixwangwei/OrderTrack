@@ -1,0 +1,45 @@
+[
+    {
+        "outputFile": "/home/pmcb2bts08/mycode/barcodescanner-master/zbar/build/intermediates/incremental/mergeDebugResources/merged.dir/values-xxhdpi-v4/values-xxhdpi-v4.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 58,
+                    "endOffset": 109
+                },
+                "from": {
+                    "file": "/home/pmcb2bts08/.android/build-cache/b93f846c2e36c46e648caef73c9838b2d4d69768/output/res/values-xxhdpi-v4/values-xxhdpi-v4.xml",
+                    "position": {
+                        "startLine": 2,
+                        "startColumn": 4,
+                        "startOffset": 55,
+                        "endColumn": 58,
+                        "endOffset": 109
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 114,
+                    "endColumn": 55,
+                    "endOffset": 165
+                },
+                "from": {
+                    "file": "/home/pmcb2bts08/.android/build-cache/b93f846c2e36c46e648caef73c9838b2d4d69768/output/res/values-xxhdpi-v4/values-xxhdpi-v4.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 114,
+                        "endColumn": 55,
+                        "endOffset": 165
+                    }
+                }
+            }
+        ]
+    }
+]
