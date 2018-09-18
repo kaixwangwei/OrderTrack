@@ -1,6 +1,6 @@
 [
     {
-        "outputFile": "/home/pmcb2bts08/python/OrderTrack/Android/core/build/intermediates/incremental/mergeDebugResources/merged.dir/values-xhdpi-v4/values-xhdpi-v4.xml",
+        "outputFile": "/home/wangwei/python/OrderTrack/Android/core/build/intermediates/incremental/mergeDebugResources/merged.dir/values-xhdpi-v4/values-xhdpi-v4.xml",
         "map": [
             {
                 "to": {
@@ -11,7 +11,7 @@
                     "endOffset": 108
                 },
                 "from": {
-                    "file": "/home/pmcb2bts08/python/OrderTrack/Android/core/src/main/res/values-xhdpi/strings.xml",
+                    "file": "/home/wangwei/python/OrderTrack/Android/core/src/main/res/values-xhdpi/strings.xml",
                     "position": {
                         "startLine": 3,
                         "startColumn": 4,
@@ -30,7 +30,7 @@
                     "endOffset": 164
                 },
                 "from": {
-                    "file": "/home/pmcb2bts08/python/OrderTrack/Android/core/src/main/res/values-xhdpi/strings.xml",
+                    "file": "/home/wangwei/python/OrderTrack/Android/core/src/main/res/values-xhdpi/strings.xml",
                     "position": {
                         "startLine": 2,
                         "startColumn": 4,
