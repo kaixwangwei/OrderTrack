@@ -26,7 +26,7 @@
     <string name="cancel_button">Cancel</string>
     <bool name="cameraPreviewShouldFillView">true</bool>
 
-
+    <string name="refresh_list">刷新</string>
     <string name="add_new_express">添加新的快递编号</string>
     <string name="scan_barcode_button">扫描条形码</string>
     <string name="scan_barcode_result">请输入条形码：</string>
@@ -40,7 +40,13 @@
     <string name="user_pass_input_fail">用户名，密码不能为空，且字符不能超过16位!请重新输入。</string>
     <string name="login_fail">登录失败，请稍后再试。</string>
     <string name="login_success">登录成功。</string>
-    <string name="insert_express_fail">插入数据失败，请重试。</string>
-
+    <string name="insert_express_fail">插入数据失败，可能是已经存在此快递信息，请确认后再尝试。</string>
+    <string name="express_id">快递单号：</string>
+    <string name="mailing_date">寄件时间：</string>
+    <string name="current_state">当前状态：</string>
+    <string name="last_logistics_state">最新物流记录：</string>
+    <string name="express_code_error_msg">快递单号不能为空,请重新填写。</string>
+    <string name="add_express_error_title">填写错误</string>
+    <string name="add_receiver_error_msg">收件人必须填写,请重新填写。</string>
 
 </resources>

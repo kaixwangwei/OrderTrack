@@ -72,5 +72,14 @@
           android:label="@string/add_new_express">
       </activity>
 
-    </application>
+      <service
+          android:name=".SyncService">
+          <intent-filter>
+              <action android:name="me.lxl.expresstrack.zxing.SyncService.startsync"/>
+          </intent-filter>
+
+      </service>
+
+
+  </application>
 </manifest>

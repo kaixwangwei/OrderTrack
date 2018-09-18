@@ -17,27 +17,32 @@
             android:layout_height="wrap_content"/>
     </android.support.design.widget.AppBarLayout>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
         <LinearLayout
-                  android:orientation="vertical"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:gravity="center">
-            <Button android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:text="@string/add_new_express"
-                    android:onClick="launchAddNewExpress" />
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
 
-            <ListView
+            <Button
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/list_view">
-            </ListView>
+                android:layout_height="wrap_content"
+                android:text="@string/refresh_list"
+                android:onClick="refreshExpressList"
+                android:layout_weight="1"/>
 
-
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_new_express"
+                android:onClick="launchAddNewExpress"
+                android:layout_weight="1"/>
 
         </LinearLayout>
-    </ScrollView>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:id="@+id/list_view">
+    </ListView>
 </LinearLayout>

@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        list = mExpressDBHelper.queryAll();
         adapter.notifyDataSetChanged();
     }
 
@@ -55,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void initListView()
     {
-
         mExpressListView = (ListView)findViewById(R.id.list_view);
         //添加监听器，监听条目点击事件
         mExpressListView.setOnItemClickListener(new MyOnItemClickListener());
@@ -95,12 +95,21 @@ public class MainActivity extends AppCompatActivity {
             View item = convertView!=null?convertView : View.inflate(getApplicationContext(), R.layout.express_item, null);
             //获取视图中的TextView
             TextView expressCode = (TextView) item.findViewById(R.id.express_code);
+            TextView receiver = (TextView) item.findViewById(R.id.receiver);
+            TextView mailingTime = (TextView) item.findViewById(R.id.mailingtime);
+            TextView currentState = (TextView) item.findViewById(R.id.current_state);
+            TextView lastLogisticStatus = (TextView) item.findViewById(R.id.last_logistics_state);
 
             //根据当前位置获取 ExpressInfo 对象
             final ExpressInfo expressInfo = list.get(position);
 
             //把Account对象中的数据放到TextView中
             expressCode.setText(expressInfo.getExpressCode() + "");
+            receiver.setText(expressInfo.getReceiver());
+            mailingTime.setText(expressInfo.getExpressDate());
+            currentState.setText(expressInfo.getSyncToServer() + "");
+            lastLogisticStatus.setText(expressInfo.getLastLogisticsInfo());
+
 
             return item;
         }
@@ -115,6 +124,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void refreshExpressList(View v) {
+        list = mExpressDBHelper.queryAll();
+        adapter.notifyDataSetChanged();
+    }
 
     public void launchAddNewExpress(View v) {
         launchActivity(AddNewExpressActivity.class);

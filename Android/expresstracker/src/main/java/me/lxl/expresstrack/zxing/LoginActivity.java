@@ -45,6 +45,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static final int LOGIN_SUCCESS = 0;
     private static final int LOGIN_FAIL = 1;
     private static final String TAG = "ExpressTrack";
+    private final String SYNC_ACTION = "me.lxl.expresstrack.zxing.SyncService.startsync";
     private Class<?> mClss;
 
     private Button mLogin;
@@ -88,10 +89,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             LoginThread login = new LoginThread(this, mHandler, passWord, userName);
             login.start();
         }
-    }
-
-    public void launchAddNewExpress(View v) {
-        launchActivity(AddNewExpressActivity.class);
     }
 
     public void launchActivity(Class<?> clss) {
@@ -200,6 +197,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Toast.makeText(mActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(mActivity, MainActivity.class);
                     mActivity.startActivity(intent);
+
+                    Intent i = new Intent(mActivity, SyncService.class);
+                    i.setAction(SYNC_ACTION);
+                    startService(i);
+
                     mPdialog.dismiss();
                     LoginActivity.this.finish();
                     break;
@@ -220,15 +222,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static class LoginThread extends Thread {
         SoftReference<AppCompatActivity> context;
         private Context mContext;
-        private String mUSerName;
+        private String mUserName;
         private String mPassWord;
-        private String urlPath = "http://192.168.100.112:5000/userLogin";
+        private String urlPath = StaticParam.LOGIN_ADDR;
         private Handler mHandler;
 
         LoginThread(AppCompatActivity activity, Handler handler, String username, String password) {
             context = new SoftReference<>(activity);
             mContext = activity;
-            mUSerName = username;
+            mUserName = username;
             mPassWord = password;
             mHandler = handler;
         }
@@ -242,7 +244,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
 
                 JSONObject payLoadJson = new JSONObject();
-                payLoadJson.put("username", mUSerName);//对其添加一个数据
+                payLoadJson.put("username", mUserName);//对其添加一个数据
                 payLoadJson.put("password", mPassWord);//对其添加一个数据
 
                 String payLoad = payLoadJson.toString();
@@ -289,6 +291,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (serverResponse.equalsIgnoreCase("success")) {
                         //启动mainactivity
                         Log.d(TAG, "0002 serverResponse = " + serverResponse);
+                        StaticParam.mUserName = mUserName;
+                        StaticParam.mPassword = mPassWord;
                         mHandler.sendEmptyMessage(LOGIN_SUCCESS);
                         return;
                     }

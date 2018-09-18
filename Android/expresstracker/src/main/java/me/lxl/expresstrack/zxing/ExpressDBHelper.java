@@ -22,10 +22,18 @@ public class ExpressDBHelper {
 
     public static String TABLE_NAME = "express_list";
     public static String COL_ID = "_id";
+    //物流编号ID
     public static String EXPRESS_CODE = "express_code";
-    public static String RECIPIENT = "recipient";
+    //收件者
+    public static String RECEIVER = "receiver";
+    //寄件时间
     public static String SEND_EXPRESS_DATE = "send_express_date";
+    //寄件费用
     public static String EXPRESS_MONEY = "express_money";
+    //物流信息
+    public static String LOGISTICS_INFO = "logistics_info";
+    //是否已经同步到服务器
+    public static String SYNC_TO_SERVER = "sync_to_server";
     public static String PROVIDER_NAME = "me.lxl.expresstrack.zxing.AppNetAccessProvider";
     public static String URI = "content://" + PROVIDER_NAME + "/" + TABLE_NAME;
 
@@ -34,10 +42,12 @@ public class ExpressDBHelper {
             + TABLE_NAME
             + " ( " + COL_ID
             + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
-            + EXPRESS_CODE + " TEXT, "
-            + RECIPIENT + " TEXT, "
-            + SEND_EXPRESS_DATE + " TEXT, "
-            + EXPRESS_MONEY + " FLOAT )";
+            + EXPRESS_CODE + " TEXT NOT NULL UNIQUE, "
+            + RECEIVER + " TEXT, "
+            + SEND_EXPRESS_DATE + " TEXT NOT NULL, "
+            + LOGISTICS_INFO + " TEXT, "
+            + SYNC_TO_SERVER + " INTEGER NOT NULL DEFAULT 0,"
+            + EXPRESS_MONEY + " FLOAT)";
 
     public ExpressDBHelper(Context context) {
         helper = new SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
@@ -67,6 +77,12 @@ public class ExpressDBHelper {
         //用来装载要插入的数据的map<列名，列的值>
         ContentValues values = new ContentValues();
         values.put(EXPRESS_CODE, expressInfo.getExpressCode());
+        values.put(RECEIVER, expressInfo.getReceiver());
+        values.put(SEND_EXPRESS_DATE, expressInfo.getExpressDate());
+        values.put(EXPRESS_MONEY, expressInfo.getExpressMoney());
+        values.put(LOGISTICS_INFO, expressInfo.getLogisticsInfo());
+        values.put(SYNC_TO_SERVER, expressInfo.getSyncToServer());
+
         //向account表插入数据values
         long id = db.insert(TABLE_NAME, null, values);
         Log.d(TAG, "[insert] id = " + id);
@@ -97,6 +113,24 @@ public class ExpressDBHelper {
     //查询所有数据倒序排列
     public List<ExpressInfo> queryAll() {
         SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor c = db.query(TABLE_NAME, null, "sync_to_server = ?", new String[]{"0"}, null, null, "_id DESC");
+        List<ExpressInfo> list = new ArrayList<ExpressInfo>();
+        while (c.moveToNext()) {
+            //可以根据列名获取索引
+            long id = c.getLong(c.getColumnIndex("_id"));
+            String expressCode = c.getString(1);
+//            int balance = c.getInt(2);
+            Log.d(TAG, "queryAll expressCode = " + expressCode);
+            list.add(new ExpressInfo(c));
+        }
+        c.close();
+        db.close();
+        return list;
+    }
+
+    //查询所有数据倒序排列
+    public List<ExpressInfo> queryAllNeedSync() {
+        SQLiteDatabase db = helper.getReadableDatabase();
         Cursor c = db.query(TABLE_NAME, null, null, null, null, null, "_id DESC");
         List<ExpressInfo> list = new ArrayList<ExpressInfo>();
         while (c.moveToNext()) {
@@ -105,7 +139,7 @@ public class ExpressDBHelper {
             String expressCode = c.getString(1);
 //            int balance = c.getInt(2);
             Log.d(TAG, "queryAll expressCode = " + expressCode);
-            list.add(new ExpressInfo(id, expressCode));
+            list.add(new ExpressInfo(c));
         }
         c.close();
         db.close();

@@ -82,6 +82,12 @@
             android:label="@string/add_new_express"
             android:theme="@style/AppTheme" >
         </activity>
+
+        <service android:name="me.lxl.expresstrack.zxing.SyncService" >
+            <intent-filter>
+                <action android:name="me.lxl.expresstrack.zxing.SyncService.startsync" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

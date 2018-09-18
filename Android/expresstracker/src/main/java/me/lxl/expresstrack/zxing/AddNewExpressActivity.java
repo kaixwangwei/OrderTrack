@@ -1,15 +1,26 @@
 package me.lxl.expresstrack.zxing;
 
+import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
+import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class AddNewExpressActivity extends AppCompatActivity implements View.OnClickListener {
@@ -19,6 +30,7 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
 
     private Button mScanButton;
     private Button mAddComplete;
+    private Button mSelectDate;
     private EditText mExpressCodeEdit;
     private EditText mRecipientEdit;
     private EditText mSendExpressDateEdit;
@@ -40,16 +52,33 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
         setSupportActionBar(toolbar);
     }
 
-    private void initView()
-    {
-        mScanButton = (Button)findViewById(R.id.scan_express_code_button);
+    private void initView() {
+        String today = getCurrentDate();
+
+        mScanButton = (Button) findViewById(R.id.scan_express_code_button);
         mScanButton.setOnClickListener(this);
-        mAddComplete = (Button)findViewById(R.id.add_new_complete);
+        mAddComplete = (Button) findViewById(R.id.add_new_complete);
         mAddComplete.setOnClickListener(this);
-        mExpressCodeEdit = (EditText)findViewById(R.id.express_code_edittext);
-        mRecipientEdit = (EditText)findViewById(R.id.recipient_edittext);
-        mSendExpressDateEdit = (EditText)findViewById(R.id.send_express_date_edittext);
-        mExpressMoneyEdit = (EditText)findViewById(R.id.express_money_exittext);
+        mExpressCodeEdit = (EditText) findViewById(R.id.express_code_edittext);
+        mRecipientEdit = (EditText) findViewById(R.id.recipient_edittext);
+        mSendExpressDateEdit = (EditText) findViewById(R.id.send_express_date_edittext);
+        mExpressMoneyEdit = (EditText) findViewById(R.id.express_money_exittext);
+
+        mSendExpressDateEdit.setText(today);
+        mSelectDate = (Button) findViewById(R.id.send_express_datepicker);
+        mSelectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar calendar = Calendar.getInstance();
+                new DatePickerDialog(AddNewExpressActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                        Log.d(TAG, String.format("%d-%d-%d", i, i1 + 1, i2));
+                        mSendExpressDateEdit.setText(String.format("%d-%d-%d", i, i1 + 1, i2));
+                    }
+                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
     }
 
     @Override
@@ -82,7 +111,7 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
+        switch (v.getId()) {
             case R.id.scan_express_code_button:
                 startScalingScanner();
                 break;
@@ -94,25 +123,70 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    private void AddExpressItem()
-    {
+    private void AddExpressItem() {
+
         String expressCode = mExpressCodeEdit.getText().toString();
-        String recipter = mRecipientEdit.getText().toString();
+        Log.d(TAG, "AddExpressItem expressCode =" + expressCode + ",");
+        if (expressCode == null || expressCode.equalsIgnoreCase("")) {
+            showErrorDialog(getString(R.string.express_code_error_msg));
+            return;
+        }
+
+
+        String receiver = mRecipientEdit.getText().toString();
+        Log.d(TAG, "AddExpressItem receiver =" + receiver + ",");
+        if (receiver == null || receiver.equalsIgnoreCase("")) {
+            showErrorDialog(getString(R.string.add_receiver_error_msg));
+            return;
+        }
+
         String sendExpressDate = mSendExpressDateEdit.getText().toString();
-        String money = mExpressMoneyEdit.getText().toString();
-        Log.d(TAG, "AddExpressItem:expressCode:" + expressCode + ",recipter:"+ recipter + ",sendExpressDate:" + sendExpressDate + ",money:" + money);
-        ExpressInfo expressInfo = new ExpressInfo(expressCode);
+        float money = parseMoney(mExpressMoneyEdit.getText().toString());
+        Log.d(TAG, "AddExpressItem:expressCode:" + expressCode + ",receiver:" + receiver + ",sendExpressDate:" + sendExpressDate + ",money:" + money);
+
+        ExpressInfo expressInfo = new ExpressInfo(expressCode, receiver, sendExpressDate, money);
 
         long id = mExpressDBHelper.insert(expressInfo);
-        if(id > 0) {
+        if (id > 0) {
+            //启动同步机制
+            Intent i = new Intent(this, SyncService.class);
+            startService(i);
+
             finish();
         } else {
-            Toast.makeText(this, R.string.insert_express_fail, Toast.LENGTH_SHORT).show();
+            showErrorDialog(getString(R.string.insert_express_fail));
         }
     }
 
-    private void startScalingScanner()
-    {
+    private void showErrorDialog(String msg) {
+        Log.d(TAG, "showErrorDialog msg: " + msg);
+
+        new AlertDialog.Builder(this).setTitle(getString(R.string.add_express_error_title)).setMessage(msg)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        }
+                ).show();
+    }
+
+    private float parseMoney(String moneyStr) {
+        float money = 0.0f;
+        try {
+            money = Float.parseFloat(moneyStr);
+        } catch (Exception e) {
+
+        }
+        return money;
+    }
+
+    private String getCurrentDate() {
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+        String dateString = sdf.format(date);
+        return dateString;
+    }
+
+    private void startScalingScanner() {
         Intent intent = new Intent(this, ScalingScannerActivity.class);
         startActivityForResult(intent, RESULT_FOR_SCANCODE);
     }
