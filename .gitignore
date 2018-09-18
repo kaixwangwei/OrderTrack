@@ -5,5 +5,6 @@ Android/zbar/build
 Android/zxing/build
 Android/zbar-sample/build
 Android/zbar-sample
-
-
+Android/core/build/
+Android/.idea/
+Android/.gradle/
