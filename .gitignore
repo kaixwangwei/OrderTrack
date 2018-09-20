@@ -8,3 +8,4 @@ Android/zbar-sample
 Android/core/build/
 Android/.idea/
 Android/.gradle/
+Server/OrderServer/logs/
