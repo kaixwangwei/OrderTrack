@@ -2,11 +2,12 @@
 import mysql.connector
 from Models import Base
 from sqlalchemy import *
-from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import OrderTrackLogger
 from OrderTrackUser import User
+from OrderTrackRecord import RecodeList
+
 
 config = {
     'host': '127.0.0.1',

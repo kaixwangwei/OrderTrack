@@ -10,9 +10,9 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column('id', Integer, primary_key=True)
-    username = Column('user_id', String(128))
+    username = Column('user_id', String(128), nullable=False, unique=True)
     email = Column('email', String(128))
-    password = Column('pwd_hash', String(128))
+    password = Column('pwd_hash', String(128), nullable=False)
     create_time = Column('create_time', String(128))
     update_time = Column('update_time', String(128))
 

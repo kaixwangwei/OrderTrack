@@ -9,3 +9,8 @@ Android/core/build/
 Android/.idea/
 Android/.gradle/
 Server/OrderServer/logs/
+Android/core/core.iml
+Android/expresstracker/expresstracker.iml
+Android/local.properties
+Android/zxing/zxing.iml
+
