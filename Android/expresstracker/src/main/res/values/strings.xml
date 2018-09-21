@@ -26,7 +26,21 @@
     <string name="cancel_button">Cancel</string>
     <bool name="cameraPreviewShouldFillView">true</bool>
 
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
+    <string name="btn_scroll_view">ScrollView demo</string>
+    <string name="btn_list_view">ListView demo</string>
+
+    <string name="header_hint_refresh_normal">Pull to refresh</string>
+    <string name="header_hint_refresh_ready">Release to refresh</string>
+    <string name="header_hint_refresh_loading">Refreshing&#8230;</string>
+    <string name="header_hint_refresh_time">Time：</string>
+    <string name="footer_hint_load_normal">Load more</string>
+    <string name="footer_hint_load_ready">Release to load more</string>
+
     <string name="refresh_list">刷新</string>
+    <string name="sync_list">同步</string>
     <string name="add_new_express">添加新的快递编号</string>
     <string name="scan_barcode_button">扫描条形码</string>
     <string name="scan_barcode_result">请输入条形码：</string>
@@ -48,5 +62,7 @@
     <string name="express_code_error_msg">快递单号不能为空,请重新填写。</string>
     <string name="add_express_error_title">填写错误</string>
     <string name="add_receiver_error_msg">收件人必须填写,请重新填写。</string>
+    <string name="have_sync">已同步</string>
+    <string name="no_sync">未同步</string>
 
 </resources>

@@ -1,9 +1,14 @@
 package me.lxl.expresstrack.zxing;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.UserHandle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -19,19 +24,25 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+import me.lxl.expresstrack.zxing.widget.XListView;
+
+public class MainActivity extends AppCompatActivity implements XListView.IXListViewListener{
 
     private static String TAG = "ExpressTrack";
     private static final int ZXING_CAMERA_PERMISSION = 1;
     private Class<?> mClss;
     private ExpressDBHelper mExpressDBHelper;
     private List<ExpressInfo> list;
+    private Handler mHandler;
 
-    private ListView mExpressListView;
+    private XListView mExpressListView;
     //适配器
-    private MyAdapter adapter;
+    private MyAdapter mAdapter;
 
 
     @Override
@@ -46,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         list = mExpressDBHelper.queryAll();
-        adapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
     public void setupToolbar() {
@@ -56,19 +67,69 @@ public class MainActivity extends AppCompatActivity {
 
     private void initListView()
     {
-        mExpressListView = (ListView)findViewById(R.id.list_view);
+        mHandler = new Handler();
+        mExpressListView = (XListView)findViewById(R.id.list_view);
+        mExpressListView.setPullRefreshEnable(true);
+        mExpressListView.setPullLoadEnable(true);
+        mExpressListView.setAutoLoadEnable(true);
+        mExpressListView.setXListViewListener(this);
+        mExpressListView.setRefreshTime(getTime());
         //添加监听器，监听条目点击事件
         mExpressListView.setOnItemClickListener(new MyOnItemClickListener());
 
         mExpressDBHelper = ExpressDBHelper.getInstance(this);
         //从数据库查询出所有数据
         list = mExpressDBHelper.queryAll();
-        adapter = new MyAdapter();
-        mExpressListView.setAdapter(adapter);//给ListView添加适配器(自动把数据生成条目)
+        mAdapter = new MyAdapter();
+        mExpressListView.setAdapter(mAdapter);//给ListView添加适配器(自动把数据生成条目)
         Log.d(TAG, "MainActivity initListView");
     }
 
+    @Override
+    public void onRefresh() {
+        Log.d(TAG, "onRefresh");
+        syncExpressList();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                list = mExpressDBHelper.queryAll();
+                mAdapter.notifyDataSetChanged();
 
+                mExpressListView.setAdapter(mAdapter);
+                onLoad();
+            }
+        }, 2500);
+    }
+
+    @Override
+    public void onLoadMore() {
+        Log.d(TAG, "onLoadMore");
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//                geneItems();
+                mAdapter.notifyDataSetChanged();
+                onLoad();
+            }
+        }, 2500);
+    }
+
+    private void onLoad() {
+        mExpressListView.stopRefresh();
+        mExpressListView.stopLoadMore();
+        mExpressListView.setRefreshTime(getTime());
+    }
+
+//    用于分批次加载
+//    private void geneItems() {
+//        for (int i = 0; i != 20; ++i) {
+//            items.add("Test XListView item " + (++mIndex));
+//        }
+//    }
+
+    private String getTime() {
+        return new SimpleDateFormat("MM-dd HH:mm", Locale.CHINA).format(new Date());
+    }
 
     //自定义一个适配器（把适配器装到ListView的工具)
     private class MyAdapter extends BaseAdapter {
@@ -107,7 +168,13 @@ public class MainActivity extends AppCompatActivity {
             expressCode.setText(expressInfo.getExpressCode() + "");
             receiver.setText(expressInfo.getReceiver());
             mailingTime.setText(expressInfo.getExpressDate());
-            currentState.setText(expressInfo.getSyncToServer() + "");
+            int syncResId;
+            if(expressInfo.getSyncToServer() == 1){
+                syncResId = R.string.have_sync;
+            } else {
+                syncResId = R.string.no_sync;
+            }
+            currentState.setText(getString(syncResId));
             lastLogisticStatus.setText(expressInfo.getLastLogisticsInfo());
 
 
@@ -119,14 +186,42 @@ public class MainActivity extends AppCompatActivity {
     private class MyOnItemClickListener implements AdapterView.OnItemClickListener{
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            ExpressInfo a = (ExpressInfo) parent.getItemAtPosition(position);
-            Toast.makeText(getApplicationContext(), a.toString(), Toast.LENGTH_SHORT).show();
+            ExpressInfo expressInfo = (ExpressInfo) parent.getItemAtPosition(position);
+            Intent intent = new Intent(MainActivity.this, ExpressDetail.class);
+            intent.putExtra("ExpressInfo",expressInfo);
+            startActivity(intent);
+            Toast.makeText(getApplicationContext(), expressInfo.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 
     public void refreshExpressList(View v) {
         list = mExpressDBHelper.queryAll();
-        adapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
+
+//        NotificationManager mNotificationManager;
+//        mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+//        String POPULATE_NORMAL_NOTIFICATION_CHANNEL = "populate_normal_notification_channel";
+//        Notification.Builder mBuilders = null;
+//        if (mBuilders == null) {
+//            mBuilders = new Notification.Builder(this);
+//            mBuilders.setContentTitle(getString(R.string.add_express_error_title));
+//            mBuilders.setAutoCancel(false);
+//            mBuilders.setOngoing(true);
+//            mBuilders.setShowWhen(false);
+//        }
+//
+//        Notification xx = mBuilders.build();
+//        if(mNotificationManager != null) {
+//            mNotificationManager.notify(3, xx);
+//        }
+//        xx.getLargeIcon()
+//        mNotificationManager.
+    }
+
+    public void syncExpressList() {
+        Intent i = new Intent(this, SyncService.class);
+        i.setAction(StaticParam.SYNC_ACTION);
+        startService(i);
     }
 
     public void launchAddNewExpress(View v) {

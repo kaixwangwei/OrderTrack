@@ -39,10 +39,10 @@
 
         </LinearLayout>
 
-    <ListView
+    <me.lxl.expresstrack.zxing.widget.XListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:id="@+id/list_view">
-    </ListView>
+    </me.lxl.expresstrack.zxing.widget.XListView>
 </LinearLayout>

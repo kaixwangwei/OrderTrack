@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static final int LOGIN_SUCCESS = 0;
     private static final int LOGIN_FAIL = 1;
     private static final String TAG = "ExpressTrack";
-    private final String SYNC_ACTION = "me.lxl.expresstrack.zxing.SyncService.startsync";
+
     private Class<?> mClss;
 
     private Button mLogin;
@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mCheckBox.setChecked(mSharedPreferences.getBoolean("savepassword", false));
         if(passWord != "" && userName != "") {
             showDiag();
-            LoginThread login = new LoginThread(this, mHandler, passWord, userName);
+            LoginThread login = new LoginThread(this, mHandler, userName, passWord);
             login.start();
         }
     }
@@ -158,8 +158,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String password = mPassWord.getText().toString();
         String username = mUSerName.getText().toString();
         if (password == null || username == null
-                || password.length() < 6 || password.length() >= 16
-                || username.length() < 6 || username.length() >= 16) {
+                || password.length() < 3 || password.length() >= 16
+                || username.length() < 3 || username.length() >= 16) {
             Toast.makeText(this, getString(R.string.user_pass_input_fail), Toast.LENGTH_SHORT).show();
             return;
         }
@@ -199,7 +199,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     mActivity.startActivity(intent);
 
                     Intent i = new Intent(mActivity, SyncService.class);
-                    i.setAction(SYNC_ACTION);
+                    i.setAction(StaticParam.SYNC_ACTION);
                     startService(i);
 
                     mPdialog.dismiss();

@@ -47,7 +47,7 @@ public class ExpressDBHelper {
             + SEND_EXPRESS_DATE + " TEXT NOT NULL, "
             + LOGISTICS_INFO + " TEXT, "
             + SYNC_TO_SERVER + " INTEGER NOT NULL DEFAULT 0,"
-            + EXPRESS_MONEY + " FLOAT)";
+            + EXPRESS_MONEY + " DOUBLE)";
 
     public ExpressDBHelper(Context context) {
         helper = new SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
@@ -73,6 +73,9 @@ public class ExpressDBHelper {
 
     public long insert(ExpressInfo expressInfo) {
         //获取数据库对象
+        if(expressInfo == null || "".equalsIgnoreCase(expressInfo.getExpressCode())) {
+            return -1;
+        }
         SQLiteDatabase db = helper.getWritableDatabase();
         //用来装载要插入的数据的map<列名，列的值>
         ContentValues values = new ContentValues();
@@ -104,14 +107,29 @@ public class ExpressDBHelper {
     public int update(ExpressInfo expressInfo) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();//要修改的数据
-        values.put(EXPRESS_CODE, expressInfo.getExpressCode());
+        values.put(RECEIVER, expressInfo.getReceiver());
+        values.put(SEND_EXPRESS_DATE, expressInfo.getExpressDate());
+        values.put(EXPRESS_MONEY, expressInfo.getExpressMoney());
+        values.put(LOGISTICS_INFO, expressInfo.getLogisticsInfo());
+        values.put(SYNC_TO_SERVER, expressInfo.getSyncToServer());
+
         int count = db.update(TABLE_NAME, values, EXPRESS_CODE +"=?", new String[]{expressInfo.getExpressCode() + ""});//更新并得到行数
         db.close();
         return count;
     }
 
+    public int updateHaveSync(String expressCode) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues values = new ContentValues();//要修改的数据
+        values.put(SYNC_TO_SERVER, 1);
+        int count = db.update(TABLE_NAME, values, EXPRESS_CODE +"=?", new String[]{expressCode + ""});//更新并得到行数
+        db.close();
+        return count;
+    }
+
+
     //查询所有数据倒序排列
-    public List<ExpressInfo> queryAll() {
+    public List<ExpressInfo> queryAllNeedSync() {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor c = db.query(TABLE_NAME, null, "sync_to_server = ?", new String[]{"0"}, null, null, "_id DESC");
         List<ExpressInfo> list = new ArrayList<ExpressInfo>();
@@ -120,7 +138,7 @@ public class ExpressDBHelper {
             long id = c.getLong(c.getColumnIndex("_id"));
             String expressCode = c.getString(1);
 //            int balance = c.getInt(2);
-            Log.d(TAG, "queryAll expressCode = " + expressCode);
+            Log.d(TAG, "queryAllNeedSync expressCode = " + expressCode);
             list.add(new ExpressInfo(c));
         }
         c.close();
@@ -129,7 +147,7 @@ public class ExpressDBHelper {
     }
 
     //查询所有数据倒序排列
-    public List<ExpressInfo> queryAllNeedSync() {
+    public List<ExpressInfo> queryAll() {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor c = db.query(TABLE_NAME, null, null, null, null, null, "_id DESC");
         List<ExpressInfo> list = new ArrayList<ExpressInfo>();
