@@ -55,18 +55,18 @@ layui.use('table', function(){
   
   table.render({
     elem: '#test'
-    ,url:'/admin/getdata'
+    ,url:'/client/getdata'
     ,toolbar: '#toolbarDemo'
     ,title: '用户数据表'
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
-      ,{field:'express_code', title:'快递编号', width:280, fixed: 'left', unresize: true, sort: true}
+      ,{field:'express_code', title:'快递编号', width:250, fixed: 'left', unresize: true, sort: true}
       ,{field:'receiver', title:'收件人', width:120, edit: 'text'}
       ,{field:'sender', title:'寄件人', width:80, edit: 'text', sort: true}
       ,{field:'express_date', title:'寄件时间', width:150, edit: 'text'}
       ,{field:'current_status', title:'最新状态'}
       ,{field:'express_money', title:'寄件费用', width:100}
-      ,{field:'joinTime', title:'加入时间', width:120}
+      ,{field:'joinTime', title:'加入时间', width:180}
       ,{fixed: 'operater', title:'操作', toolbar: '#barDemo', fixed: 'right', width:150}
     ]]
     ,page: true

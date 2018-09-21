@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from Models import Base
+from OrderTrackBase import Base
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 import mysql.connector
@@ -19,9 +19,17 @@ class RecodeList(Base):
     create_time = Column('create_time', String(128))
     update_time = Column('update_time', String(128))
 
-    def __init__(self, id, expressCode, receiver, expressDate, creater, expressMoney, expressStatus, create_time, update_time):
-        self.id = id
+    def __init__(self,expressCode, receiver, expressDate, creater, expressMoney, expressStatus, create_time, update_time):
         self.expressCode = expressCode
+        self.receiver = receiver
+        self.expressDate = expressDate
+        self.creater = creater
+        self.expressMoney = expressMoney
+        self.expressStatus = expressStatus
+        self.create_time = create_time
+        self.update_time = update_time
+    
+    def update(self, receiver, expressDate, creater, expressMoney, expressStatus, update_time):
         self.receiver = receiver
         self.expressDate = expressDate
         self.creater = creater
@@ -31,6 +39,6 @@ class RecodeList(Base):
         self.update_time = update_time
         
     def __repr__(self):
-        return '<id is %s, username is %s, expressDate is %s, receiver is %s, create time is %s, update time is %s>' % (
-            self.id, self.username, self.expressDate, self.receiver, self.create_time, self.update_time)
+        return '<id is %s, expressCode is %s, expressDate is %s, receiver is %s, create time is %s, update time is %s>' % (
+            self.id, self.expressCode, self.expressDate, self.receiver, self.create_time, self.update_time)
 

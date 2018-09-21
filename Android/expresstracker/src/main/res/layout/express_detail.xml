@@ -37,18 +37,13 @@
                     android:id="@+id/express_code_textview"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/scan_barcode_result"></TextView>
+                    android:text="@string/express_number"></TextView>
 
                 <EditText
                     android:id="@+id/express_code_edittext"
                     android:layout_width="150dp"
+                    android:enabled="false"
                     android:layout_height="wrap_content"></EditText>
-
-                <Button
-                    android:id="@+id/scan_express_code_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/scan_barcode_button"></Button>
 
             </LinearLayout>
 
@@ -64,7 +59,7 @@
                     android:text="@string/recipient"></TextView>
 
                 <EditText
-                    android:id="@+id/recipient_edittext"
+                    android:id="@+id/receiver"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"></EditText>
 
@@ -84,9 +79,8 @@
                 <EditText
                     android:id="@+id/send_express_date_edittext"
                     android:layout_width="150dp"
-                    android:enabled="false"
-                    android:text="2018-09-15"
-                    android:layout_height="wrap_content"></EditText>
+                    android:layout_height="wrap_content"
+                    android:enabled="false"></EditText>
 
                 <Button
                     android:id="@+id/send_express_datepicker"
@@ -109,19 +103,67 @@
                     android:text="@string/express_money"></TextView>
 
                 <EditText
-                    android:id="@+id/express_money_exittext"
+                    android:id="@+id/detail_express_money_exittext"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"></EditText>
 
             </LinearLayout>
-
-            <Button
-                android:id="@+id/add_new_complete"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="launchAddNewExpress"
-                android:text="@string/add_new_express_complete">
-            </Button>
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/current_logistics_state_textview"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/last_logistics_state"></TextView>
+
+                <EditText
+                    android:id="@+id/current_logistics_state_edittext"
+                    android:layout_width="match_parent"
+                    android:enabled="false"
+                    android:maxLines="20"
+                    android:minLines="10"
+                    android:layout_height="wrap_content"></EditText>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/delete_express"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/delete_express"></Button>
+
+                <Button
+                    android:id="@+id/modify_express"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/modify_express"></Button>
+
+                <Button
+                    android:id="@+id/save_express"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    android:text="@string/cancel_exit_express"></Button>
+
+
+                <Button
+                    android:id="@+id/cancel_express"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    android:text="@string/save_express"></Button>
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

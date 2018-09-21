@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-
-from Models import Base
+from OrderTrackBase import *
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 import mysql.connector
@@ -26,8 +25,8 @@ class User(Base):
 
     def __init__(self, username,  password):
         self.username = username
-        self.password = password
-        
+        self.password = password   
+
     def __repr__(self):
         return '<id is %s, username is %s, password is %s, email is %s, create time is %s, update time is %s>' % (
             self.id, self.username, self.password, self.email, self.create_time, self.update_time)

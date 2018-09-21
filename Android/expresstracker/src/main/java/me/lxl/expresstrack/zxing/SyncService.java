@@ -165,7 +165,6 @@ public class SyncService extends IntentService
                 jsonObject.put("expressDate", expressInfo.getExpressDate());
                 jsonObject.put("expressMoney", expressInfo.getExpressMoney());
                 jsonObject.put("syncToServer", expressInfo.getSyncToServer());
-                jsonObject.put("expressCode", expressInfo.getExpressCode());
                 expressList.put(jsonObject);
             } catch (JSONException e) {
                 e.printStackTrace();

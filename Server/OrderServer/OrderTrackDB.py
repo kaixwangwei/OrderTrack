@@ -1,28 +1,21 @@
 # -*- coding: utf-8 -*-
 import mysql.connector
-from Models import Base
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import OrderTrackLogger
 from OrderTrackUser import User
 from OrderTrackRecord import RecodeList
+from OrderTrackBase import *
+
+#创建mysql用户 , 并创建库， 并赋予相应权限
+#create user 'Kuaiyilicai'@'%' identified by '123456'
+#create database testFlask default character set utf8 collate utf8_general_ci;
+#grant all privileges on `Kuaiyilicai`.* to 'Kuaiyilicai'@'%' identified by '123456';
 
 
-config = {
-    'host': '127.0.0.1',
-    'user': 'root',
-    'password': '123456',
-    'port': 3306,
-    'database': 'testFlask',
-    'charset': 'utf8'
-}
-user_orm_url = 'mysql+mysqlconnector://root:123456@127.0.0.1:3306/testFlask'
-
-user_sql = 'select * from testFlask.users where user_id = %s limit 1'
 logger = OrderTrackLogger.get_logger(__name__)
-
-
+user_sql = 'select * from testFlask.users where user_id = %s limit 1'
 
 
 # get database connection using mysql.connector
@@ -68,7 +61,6 @@ def get_user(user_id):
 def get_user_session(user_id):
     try:
         print("get_user_session user_id:%s"%(user_id))
-        engine = create_engine(user_orm_url, echo=True)
         session = sessionmaker()
         session.configure(bind=engine)
         Base.metadata.create_all(engine)
@@ -82,12 +74,11 @@ def get_user_session(user_id):
 
 
 # get connection session
-def get_connection_session(url):
+def get_connection_session(url=user_orm_url):
     try:
-        engine = create_engine(url, echo=True)
         session = sessionmaker()
         session.configure(bind=engine)
-        Base.metadata.create_all(engine)
+        #Base.metadata.create_all(engine)
         s = session()
         return s
     except Exception as e:
@@ -96,18 +87,52 @@ def get_connection_session(url):
 
 
 # get connection using url
-def get_connection_with_url(url):
+def get_connection_with_url(url=user_orm_url):
     try:
-        engine = create_engine(url, echo=True)
         conn = engine.connect()
         return conn
     except Exception as e:
         logger.debug("Exception is %s" % e)
         return None
 
+def creatDefaultUser():
+    try:
+        session = sessionmaker()
+        session.configure(bind=engine)
+        Base.metadata.create_all(engine)
+        s = session()
 
+        #DBSession = sessionmaker(bind=engine)
+        #session = DBSession()
+        # 创建新User对象:
+        # 添加到session:  
+        use = s.query(User).filter_by(username='admin').first()
+        if use:
+            new_user1 = use
+            new_user1.username = 'admin'
+            new_user1.password = 'admin123'
+        else:
+            new_user1 = User(username='admin', password='admin123')
+
+        s.add(new_user1)
+        s.commit()        
+
+        use = s.query(User).filter_by(username='123456').first()
+        if use:
+            new_user2 = use
+            new_user2.username = '123456'
+            new_user2.password = '123456'
+        else:
+            new_user2 = User(username='123456', password='123456')
+        ret = s.add(new_user2)
+        s.commit()
+        return ret
+    except Exception as e:
+        logger.debug("get_user_session Exception is %s" % e)
+        return None
 if __name__ == '__main__':
-    print(get_user_session('admin'))
+    creatDefaultUser()
+    #print(get_user_session('admin'))
     
 
     #print(get_user('admin'))

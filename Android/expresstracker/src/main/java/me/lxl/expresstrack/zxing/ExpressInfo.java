@@ -62,14 +62,25 @@ public class ExpressInfo implements Parcelable {
         return mReceiver;
     }
 
+    public void setReceiver(String receiver) {
+        mReceiver = receiver;
+    }
+
     public String getExpressDate() {
         return mExpressDate;
+    }
+
+    public void setExpressDate(String expressDate) {
+        mExpressDate = expressDate;
     }
 
     public double getExpressMoney() {
         return mExpressMoney;
     }
 
+    public void setExpressMoney(double money){
+        mExpressMoney = money;
+    }
     public String getLogisticsInfo() {
         return mLogisticsInfo;
     }

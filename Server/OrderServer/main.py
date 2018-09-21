@@ -31,6 +31,8 @@ app.config['UPLOAD_PATH'] = 'upload'
 
 app.config['UPLOADS_DEFAULT_DEST'] = app.config['UPLOAD_PATH']
 app.config['UPLOADS_DEFAULT_URL'] = 'http://127.0.0.1:9000/'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:123456@127.0.0.1:3306/testFlask'
+
 uploaded_photos = UploadSet()
 configure_uploads(app, uploaded_photos)
 api = Api(app)
@@ -346,4 +348,4 @@ app.secret_key = 'aHR0cDovL3d3dy53YW5kYS5jbi8='
 if __name__ == '__main__':
     # print(type(flask_db.get_user('admin')))
     # print(flask_db.get_user('admin'))
-    app.run(port=9000, debug=True)
+    app.run(host='0.0.0.0', port=9000, debug=True)
