@@ -197,25 +197,6 @@ public class MainActivity extends AppCompatActivity implements XListView.IXListV
     public void refreshExpressList(View v) {
         list = mExpressDBHelper.queryAll();
         mAdapter.notifyDataSetChanged();
-
-//        NotificationManager mNotificationManager;
-//        mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-//        String POPULATE_NORMAL_NOTIFICATION_CHANNEL = "populate_normal_notification_channel";
-//        Notification.Builder mBuilders = null;
-//        if (mBuilders == null) {
-//            mBuilders = new Notification.Builder(this);
-//            mBuilders.setContentTitle(getString(R.string.add_express_error_title));
-//            mBuilders.setAutoCancel(false);
-//            mBuilders.setOngoing(true);
-//            mBuilders.setShowWhen(false);
-//        }
-//
-//        Notification xx = mBuilders.build();
-//        if(mNotificationManager != null) {
-//            mNotificationManager.notify(3, xx);
-//        }
-//        xx.getLargeIcon()
-//        mNotificationManager.
     }
 
     public void syncExpressList() {

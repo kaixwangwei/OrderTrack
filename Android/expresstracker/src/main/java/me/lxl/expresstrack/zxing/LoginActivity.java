@@ -91,6 +91,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    public void startMainActivity(View v)
+    {
+        StaticParam.offlineMode = true;
+        launchActivity(MainActivity.class);
+    }
+
     public void launchActivity(Class<?> clss) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {

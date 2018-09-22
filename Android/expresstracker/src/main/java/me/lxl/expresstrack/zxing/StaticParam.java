@@ -2,6 +2,7 @@ package me.lxl.expresstrack.zxing;
 
 public class StaticParam
 {
+    public static boolean offlineMode = false;
     public static String mUserName = "";
     public static String mPassword = "";
     public static final String TAG = "ExpressTrack";

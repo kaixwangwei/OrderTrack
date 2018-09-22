@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-class ExpressDetail extends AppCompatActivity implements View.OnClickListener
+public class ExpressDetail extends AppCompatActivity implements View.OnClickListener
 {
     private final String TAG = StaticParam.TAG;
     private ExpressInfo mExpressInfo = null;
@@ -161,14 +161,19 @@ class ExpressDetail extends AppCompatActivity implements View.OnClickListener
         if(mode == MODEFY_MODE) {
             mCancelButton.setVisibility(View.VISIBLE);
             mSaveButton.setVisibility(View.VISIBLE);
-            mDeleteButton.setVisibility(View.INVISIBLE);
-            mModifyButton.setVisibility(View.INVISIBLE);
+            mDeleteButton.setVisibility(View.GONE);
+            mModifyButton.setVisibility(View.GONE);
+            mReceiver.setEnabled(true);
+            mSendDate.setEnabled(true);
+            mMoney.setEnabled(true);
         } else if(mode == NORMAL_MODE) {
-            mCancelButton.setVisibility(View.INVISIBLE);
-            mSaveButton.setVisibility(View.INVISIBLE);
+            mCancelButton.setVisibility(View.GONE);
+            mSaveButton.setVisibility(View.GONE);
             mDeleteButton.setVisibility(View.VISIBLE);
             mModifyButton.setVisibility(View.VISIBLE);
-
+            mReceiver.setEnabled(false);
+            mSendDate.setEnabled(false);
+            mMoney.setEnabled(false);
         }
     }
 }
