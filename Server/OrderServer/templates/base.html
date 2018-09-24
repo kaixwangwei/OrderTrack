@@ -6,10 +6,14 @@
     <a href="/addnew">添加新记录</a>
   </li>
   <li class="layui-nav-item ordertrack-navi" lay-unselect="">
-    <a href="javascript:;"><img src="//t.cn/RCzsdCq" class="layui-nav-img">{{ name }}</a>
+    <a href="javascript:;"><img src="//t.cn/RCzsdCq" class="layui-nav-img">{{ current_user.fullname }}</a>
     <dl class="layui-nav-child">
       <dd><a href="javascript:;">修改信息</a></dd>
-      <!--<dd><a href="javascript:;">安全管理</a></dd>-->
+      {% if current_user != None and (current_user.role == 1 or current_user.role == "1")  %}
+        <dd><a href="/admin/user">用户管理</a></dd>
+      {% endif %}
+      
+      
       <dd><a href="javascript:logout();">退了</a></dd>
     </dl>
   </li>

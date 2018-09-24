@@ -107,6 +107,7 @@ def creatDefaultUser():
             new_user1 = use
             new_user1.username = 'admin'
             new_user1.password = 'admin123'
+            new_user1.role = '1'
         else:
             new_user1 = User(username='admin', password='admin123')
 

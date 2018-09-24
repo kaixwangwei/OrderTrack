@@ -54,7 +54,9 @@ app.register_blueprint(operation, url_prefix='/v1')
 # http://docs.jinkan.org/docs/flask/index.html
 # http://flask-login.readthedocs.io/en/latest/#login-example
 class User(flask_login.UserMixin):
-    pass
+    def __init__(self):
+        self.role = object
+        self.fullname = None
 
 
 def log(*text):
@@ -68,12 +70,36 @@ def log(*text):
 
     return decorator
 
+def setUserByDict(username, tmpUser):
+    user = User()
+    user.id = username
+    
+    if tmpUser.fullname == None:
+        user.fullname = tmpUser.username
+    else:
+        user.fullname = tmpUser.fullname
+    user.role = tmpUser.role
+    print("user.fullname = %s, user.role = %s"%(user.fullname, user.role))
+    return user
+    
+def setUser(username):
+    user = User()
+    tmpUser = OrderTrackDB.get_user_session(username)
+    user.id = username
+    
+    if tmpUser.fullname == None:
+        user.fullname = tmpUser.username
+    else:
+        user.fullname = tmpUser.fullname
+    user.role = tmpUser.role
+    print("user.fullname = %s, user.role = %s"%(user.fullname, user.role))
+    return user
 
 @login_manager.user_loader
 def user_loader(username):
-    user = User()
-    user.id = username
+    user = setUser(username)
     logger.debug("user_loader user is %s, is_authenticated %s" % (user.id, user.is_authenticated))
+    
     return user
 
 
@@ -103,8 +129,9 @@ def is_safe_url(next_url):
 @app.route('/index', methods=['GET', 'POST'])
 @flask_login.login_required
 def index():
-    logger.debug("index page, method is %s" % request.method)
-    return render_template('index.html', name=flask_login.current_user.id)
+    logger.debug("index page, method is %s " % request.method)
+    print("user fullename :%s"%flask_login.current_user.fullname)
+    return render_template('index.html', username=flask_login.current_user)
 
 
 @app.route('/error')
@@ -134,18 +161,17 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        user = OrderTrackDB.get_user_session(username)
-        if user != None:
-            logger.debug('db user id is %s, detail is %s' % (user.username, user))
+        tmpUser = OrderTrackDB.get_user_session(username)
+        if tmpUser != None:
+            logger.debug('db user id is %s, detail is %s' % (tmpUser.username, tmpUser))
 
             next_url = request.args.get("next")
             logger.debug('next is %s' % next_url)
 
-            if password == user.password and username == user.username:
+            if password == tmpUser.password and username == tmpUser.username:
                 # set login user
                 print("admin login success")
-                user = User()
-                user.id = username
+                user = setUserByDict(username, tmpUser)
                 flask_login.login_user(user)
     
                 resp = make_response(render_template('index.html', name=username))
