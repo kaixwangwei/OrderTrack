@@ -1,0 +1,43 @@
+<ul class="layui-nav">
+  <li class="layui-nav-item ordertrack-navi">
+    <a href="/index">首页</a>
+  </li>
+  <li class="layui-nav-item ordertrack-navi">
+    <a href="">个人中心</a>
+  </li>
+  <li class="layui-nav-item ordertrack-navi" lay-unselect="">
+    <a href="javascript:;"><img src="//t.cn/RCzsdCq" class="layui-nav-img">{{ name }}</a>
+    <dl class="layui-nav-child">
+      <dd><a href="javascript:;">修改信息</a></dd>
+      <dd><a href="javascript:;">安全管理</a></dd>
+      <dd><a href="javascript:logout();">退了</a></dd>
+    </dl>
+  </li>
+    <li class=" ordertrack-right">刘家大院订单管理平台
+  </li>
+</ul>
+<hr>
+<style>
+.ordertrack-navi{
+margin-left:50px;
+}
+.ordertrack-right {
+    margin-left:60%;
+    font-size:32px;
+}
+</style><script type="text/javascript">
+    var logout = function () {
+        window.location.href = '/logout';
+    }
+</script>
+<script>
+layui.use('element', function(){
+  var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+  
+  //监听导航点击
+  element.on('nav(demo)', function(elem){
+    //console.log(elem)
+    layer.msg(elem.text());
+  });
+});
+</script>

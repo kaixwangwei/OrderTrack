@@ -17,6 +17,7 @@ from flask_uploads import UploadSet, configure_uploads
 from OrderTrackAdmin import admin
 from ClientApi import client
 from OrderTrackResource import ordertrack_resource
+from OrderTrackAdd import add
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -45,6 +46,9 @@ app.register_blueprint(admin, url_prefix='/v1')
 
 app.register_blueprint(client)
 app.register_blueprint(client, url_prefix='/v1')
+
+app.register_blueprint(add)
+app.register_blueprint(add, url_prefix='/v1')
 
 # http://www.pythondoc.com/flask-login/index.html#request-loader
 # http://docs.jinkan.org/docs/flask/index.html

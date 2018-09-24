@@ -8,10 +8,6 @@ from OrderTrackUser import User
 from OrderTrackRecord import RecodeList
 from OrderTrackBase import *
 
-#创建mysql用户 , 并创建库， 并赋予相应权限
-#create user 'Kuaiyilicai'@'%' identified by '123456'
-#create database testFlask default character set utf8 collate utf8_general_ci;
-#grant all privileges on `Kuaiyilicai`.* to 'Kuaiyilicai'@'%' identified by '123456';
 
 
 logger = OrderTrackLogger.get_logger(__name__)

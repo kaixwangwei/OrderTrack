@@ -5,15 +5,24 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 
+#创建mysql用户 , 并创建库， 并赋予相应权限
+#create user 'OrderTrack'@'%' identified by 'wangweiLxl'
+#create database OrderTrackDB default character set utf8 collate utf8_general_ci;
+#grant all privileges on `OrderTrackDB`.* to 'OrderTrack'@'%' identified by 'wangweiLxl';
 
-user_orm_url = 'mysql+mysqlconnector://root:123456@127.0.0.1:3306/testFlask'
+#修改MYSQL密码：
+#use mysql;
+#update user set authentication_string=password('wangweiLxl') where user='root';
+#flush privileges;
+
+user_orm_url = 'mysql+mysqlconnector://OrderTrack:wangweiLxl@127.0.0.1:3306/OrderTrackDB'
 
 config = {
     'host': '127.0.0.1',
-    'user': 'root',
-    'password': '123456',
+    'user': 'OrderTrack',
+    'password': 'wangweiLxl',
     'port': 3306,
-    'database': 'testFlask',
+    'database': 'OrderTrackDB',
     'charset': 'utf8'
 }
 
