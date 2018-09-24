@@ -60,6 +60,7 @@
 
                 <EditText
                     android:id="@+id/receiver"
+                    android:enabled="false"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"></EditText>
 
@@ -87,8 +88,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/send_express_day" />
-
-
             </LinearLayout>
 
             <LinearLayout
@@ -104,6 +103,7 @@
 
                 <EditText
                     android:id="@+id/detail_express_money_exittext"
+                    android:enabled="false"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"></EditText>
 

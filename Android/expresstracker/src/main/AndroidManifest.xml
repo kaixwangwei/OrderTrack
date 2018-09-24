@@ -72,6 +72,11 @@
           android:label="@string/add_new_express">
       </activity>
 
+      <activity android:name=".ExpressDetail"
+          android:theme="@style/AppTheme"
+          android:label="@string/espress_detail">
+      </activity>
+
       <service
           android:name=".SyncService">
           <intent-filter>
