@@ -24,7 +24,6 @@
 <table class="layui-hide" id="test" lay-filter="test"></table>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
-    <button class="layui-btn layui-btn-sm" lay-event="createNew">添加新记录</button>
     <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
     <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
     <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
@@ -42,7 +41,7 @@ layui.use('table', function(){
   
   table.render({
     elem: '#test'
-    ,url:'/client/getdata'
+    ,url:'/getdata'
     ,toolbar: '#toolbarDemo'
     ,title: '用户数据表'
     ,cols: [[
@@ -74,9 +73,6 @@ layui.use('table', function(){
       case 'isAll':
         layer.msg(checkStatus.isAll ? '全选': '未全选');
       break;
-      case 'createNew':
-        window.location.href="/addnew?backurl="+window.location.href; 
-      break;
     };
   });
   
@@ -86,7 +82,8 @@ layui.use('table', function(){
     //console.log(obj)
     if(obj.event === 'del'){
       layer.confirm('真的删除行么', function(index){
-        obj.del();
+        <!--alert(data.express_code);-->
+        ret = deleteItem(obj, data);
         layer.close(index);
       });
     } else if(obj.event === 'edit'){
@@ -103,6 +100,24 @@ layui.use('table', function(){
   });
   
 });
+
+function deleteItem(obj, data)
+{
+    $.ajax({
+      url: "/delete",
+      type: "POST",
+      contentType: "application/json; charset=utf-8",
+      data: JSON.stringify(data),
+      success: function (info) {
+          var dataObj = eval("("+info+")");
+          if (dataObj.code === 1) {
+              obj.del();
+          } else {
+            alert("添加失败原因： " + dataObj.reason + ",请回到主页之后再次确认，谢谢！");
+          }
+        }
+      });
+}
 </script>
 
 </body>

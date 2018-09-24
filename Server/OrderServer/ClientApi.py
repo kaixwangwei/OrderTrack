@@ -58,7 +58,7 @@ def insertrecord():
             expressStatus = ""
             
             localTime = time.localtime() 
-            strTime = time.strftime("%Y-%m-%d %H:%M:%S", localTime)             
+            strTime = time.strftime("%Y-%m-%d %H:%M:%S", localTime)
 
             create_time = strTime
             update_time = strTime

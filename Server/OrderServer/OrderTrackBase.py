@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 
 #创建mysql用户 , 并创建库， 并赋予相应权限
-#create user 'OrderTrack'@'%' identified by 'wangweiLxl'
+#create user 'OrderTrack'@'%' identified by 'wangweiLxl';
 #create database OrderTrackDB default character set utf8 collate utf8_general_ci;
 #grant all privileges on `OrderTrackDB`.* to 'OrderTrack'@'%' identified by 'wangweiLxl';
 

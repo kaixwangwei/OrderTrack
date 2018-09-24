@@ -7,7 +7,7 @@ import OrderTrackLogger
 from OrderTrackUser import User
 from OrderTrackRecord import RecodeList
 from OrderTrackBase import *
-
+import time
 
 
 logger = OrderTrackLogger.get_logger(__name__)
@@ -126,6 +126,57 @@ def creatDefaultUser():
     except Exception as e:
         logger.debug("get_user_session Exception is %s" % e)
         return None
+    
+    
+#添加记录到数据库，返回 true , 或者 false 
+def addRecord(record):
+    dictT = {}
+    tmpRecord = db_session.query(RecodeList).filter_by(expressCode = record.expressCode).first()
+    dictT['expressCode'] = record.expressCode
+    print record
+    if tmpRecord and tmpRecord.deleted == 0:
+        dictT['result'] = 'fail'
+        dictT['reason'] = u'已经存在该快递编号'
+        dictT['code'] = -1
+    else :
+        if tmpRecord:
+            tmpRecord.updateFrom(record)
+            tmpRecord.deleted = 0;
+            db_session.add(tmpRecord)
+        else:
+            db_session.add(record)
+        id = db_session.commit()
+        dictT['result'] = 'success'
+        dictT['reason'] = ''
+        dictT['id'] = id
+        dictT['code'] = 1
+        dictT['url'] = '/index'
+        
+    return dictT
+
+def delRecord(requess_code):
+    print ("delRecord")
+    dictT = {}
+    tmpRecord = db_session.query(RecodeList).filter_by(expressCode = requess_code).first()
+    if tmpRecord:
+        tmpRecord.deleted = 1
+        db_session.add(tmpRecord)
+        id = db_session.commit()
+        dictT['code'] = 1
+    else:
+        dictT['code'] = -1
+        dictT['result'] = 'fail'
+        dictT['reason'] = u'不存在该快递编号!'
+
+    print tmpRecord
+    
+    return dictT
+
+#添加记录到数据库，返回 true , 或者 false 
+def getAllExistData():
+    record = db_session.query(RecodeList).filter(RecodeList.deleted == 0).filter_by().all()
+    return record
+
 if __name__ == '__main__':
     creatDefaultUser()
     #print(get_user_session('admin'))

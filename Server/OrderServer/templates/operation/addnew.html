@@ -30,7 +30,7 @@
   <div class="layui-form-item">
     <label class="layui-form-label">快递编号</label>
     <div class="layui-input-inline">
-      <input type="text" name="express_code" lay-verify="required" placeholder="请输入快递编号" autocomplete="off" class="layui-input">
+      <input type="text" name="express_code" lay-verify="required" placeholder="请输入快递编号" autocomplete="off" class="layui-input"  value="123">
     </div>
     <div class="layui-form-mid layui-word-aux">*请务必填写</div>
   </div>
@@ -52,7 +52,7 @@
   <div class="layui-form-item">
     <label class="layui-form-label">收件人</label>
     <div class="layui-input-inline">
-      <input type="text" name="receiver" lay-verify="required" placeholder="请输入收件人" autocomplete="off" class="layui-input">
+      <input type="text" name="receiver" lay-verify="required" placeholder="请输入收件人" autocomplete="off" class="layui-input" value="123">
     </div>
     <div class="layui-form-mid layui-word-aux">*请务必填写</div>
   </div>
@@ -67,7 +67,7 @@
     <div class="layui-inline">
       <label class="layui-form-label">寄件费用</label>
       <div class="layui-input-inline">
-        <input type="text" name="money" lay-verify="required" placeholder="请输入金额" autocomplete="off" class="layui-input" onkeyup="onlyNumber(this)" onblur="onlyNumber(this)">
+        <input type="text" name="money" lay-verify="required" placeholder="请输入金额" autocomplete="off"  value="123" class="layui-input" onkeyup="onlyNumber(this)" onblur="onlyNumber(this)">
       </div>
       <div class="layui-form-mid layui-word-aux">*请务必填写</div>
     </div>
@@ -76,7 +76,7 @@
   <div class="layui-form-item">
     <label class="layui-form-label">日期选择</label>
     <div class="layui-input-inline">
-      <input type="text" name="date" id="date1" autocomplete="off" class="layui-input">
+      <input type="text" id="date" name="date" id="date1" autocomplete="off" class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">
@@ -85,8 +85,11 @@
   </div>
 </form>
 
+<script>
 
+</script>
 <script language="JavaScript" >
+  
 function onlyNumber(obj){
   //得到第一个字符是否为负号
   var t = obj.value.charAt(0);
@@ -104,7 +107,7 @@ function onlyNumber(obj){
   }
 }
 </script>
-
+  
 <script>
 layui.use(['form', 'layedit', 'laydate'], function(){
   var form = layui.form
@@ -139,9 +142,9 @@ layui.use(['form', 'layedit', 'laydate'], function(){
   //监听提交
   form.on('submit(demo2)', function(data){
     
-    layer.alert(JSON.stringify(data.field), {
-      title: '最终的提交信息'
-    })
+    <!--layer.alert(JSON.stringify(data.field), {-->
+      <!--title: '最终的提交信息'-->
+    <!--})-->
     
     $.ajax({
       url: "/addnew",
@@ -149,48 +152,42 @@ layui.use(['form', 'layedit', 'laydate'], function(){
       contentType: "application/json; charset=utf-8",
       data: JSON.stringify(data.field),
       success: function (info) {
-        if (info.code === 1) {
-            setTimeout(function () {
-            location.href = info.url;
-          }, 1000);
-        }
-        layer.msg(info.msg);
+      var dataObj=eval("("+info+")");
+          if (dataObj.code === 1) {
+              setTimeout(function () {
+              location.href = dataObj.url;
+            }, 1000);
+          } else {
+            alert("添加失败原因： " + dataObj.reason + ",请回到主页之后再次确认，谢谢！");
+          }
         }
       });
-return false;
+    return false;
   });
-    //表单初始赋值
-  form.val('example', {
-    "express_code": "12453232" // "name": "value"
-    ,"kuaidigongshi": "顺丰"
-    ,"receiver": "wangwei"
-    ,"money":26
-    ,"date":"2018-09-25"
-  })
 });
 </script>
+</body>
 
 <script type="text/javascript">
-    function login() {
-        $.ajax({
-        //几个参数需要注意一下
-            type: "POST",//方法类型
-            dataType: "json",//预期服务器返回的数据类型
-            url: "/addnew" ,//url
-            data: $('#form1').serialize(),
-            success: function (result) {
-                console.log(result);//打印服务端返回的数据(调试用)
-                if (result.resultCode == 200) {
-                    alert("SUCCESS");
-                }
-                ;
-            },
-            error : function() {
-                alert("异常！");
-            }
-        });
-    }
+
+$(function(){ 
+  var mydateInput = document.getElementById("date");
+  var date = new Date();
+  var dateString = date.getFullYear()
+  if(date.getMonth() <= 8) {
+    dateString = dateString + "-0" + (date.getMonth() + 1)
+  } else {
+    dateString = dateString + "-" + (date.getMonth() + 1)
+  }
+  
+  if(date.getDate() <= 9){
+    dateString = dateString + "-0" + date.getDate();
+  } else {
+    dateString = dateString + "-" + date.getDate();
+  }
+  mydateInput.value = dateString;
+});
+
+
 </script>
-    
-</body>
 </html>

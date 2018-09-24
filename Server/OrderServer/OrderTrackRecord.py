@@ -18,7 +18,19 @@ class RecodeList(Base):
     expressStatus = Column('express_status', String(1024))
     create_time = Column('create_time', String(128))
     update_time = Column('update_time', String(128))
+    deleted = Column('deleted', Integer, nullable=False)
 
+    def __init__(self,expressCode, receiver, expressDate, creater, expressMoney, expressStatus, create_time, update_time, deleted):
+        self.expressCode = expressCode
+        self.receiver = receiver
+        self.expressDate = expressDate
+        self.creater = creater
+        self.expressMoney = expressMoney
+        self.expressStatus = expressStatus
+        self.create_time = create_time
+        self.update_time = update_time
+        self.deleted = deleted
+    
     def __init__(self,expressCode, receiver, expressDate, creater, expressMoney, expressStatus, create_time, update_time):
         self.expressCode = expressCode
         self.receiver = receiver
@@ -28,7 +40,8 @@ class RecodeList(Base):
         self.expressStatus = expressStatus
         self.create_time = create_time
         self.update_time = update_time
-    
+        self.deleted = 0
+        
     def update(self, receiver, expressDate, creater, expressMoney, expressStatus, update_time):
         self.receiver = receiver
         self.expressDate = expressDate
@@ -38,7 +51,21 @@ class RecodeList(Base):
         self.create_time = create_time
         self.update_time = update_time
         
+    def update(self, deleted):
+        self.deleted = deleted
+        
+    def updateFrom(self, record):
+        self.expressCode = record.expressCode
+        self.receiver = record.receiver
+        self.expressDate = record.expressDate
+        self.creater = record.creater
+        self.expressMoney = record.expressMoney
+        self.expressStatus = record.expressStatus
+        self.create_time = record.create_time
+        self.update_time = record.update_time
+        self.deleted = record.deleted
+        
     def __repr__(self):
-        return '<id is %s, expressCode is %s, expressDate is %s, receiver is %s, create time is %s, update time is %s>' % (
-            self.id, self.expressCode, self.expressDate, self.receiver, self.create_time, self.update_time)
+        return '<id is %s, expressCode is %s, expressDate is %s, receiver is %s, create time is %s, update time is %s ,deleted is %s>' % (
+            self.id, self.expressCode, self.expressDate, self.receiver, self.create_time, self.update_time, self.deleted)
 
