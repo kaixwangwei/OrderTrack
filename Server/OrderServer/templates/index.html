@@ -42,7 +42,8 @@ layui.use('table', function(){
   table.render({
     elem: '#test'
     ,url:'/getdata'
-    ,title: '用户数据表'
+    ,title: '快递信息数据表'
+    <!--,toolbar: toolbarDemo-->
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
       ,{field:'express_code', title:'快递编号', width:250, fixed: 'left', unresize: true, sort: true}

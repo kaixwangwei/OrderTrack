@@ -33,6 +33,11 @@ class User(Base):
         self.username = username
         self.password = password
 
+    def __init__(self, username,  password, role):
+        self.username = username
+        self.password = password
+        self.role = role
+        
     def __repr__(self):
         return '<id is %s, username is %s, password is %s, group_name:%s, email is %s, create time is %s, update time is %s>' % (
             self.id, self.username, self.password, self.group_name, self.email, self.create_time, self.update_time)

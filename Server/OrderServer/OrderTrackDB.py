@@ -109,7 +109,7 @@ def creatDefaultUser():
             new_user1.password = 'admin123'
             new_user1.role = '1'
         else:
-            new_user1 = User(username='admin', password='admin123')
+            new_user1 = User(username='admin', password='admin123', role= 1)
 
         s.add(new_user1)
         s.commit()        
