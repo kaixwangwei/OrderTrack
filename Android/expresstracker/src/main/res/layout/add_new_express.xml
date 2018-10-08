@@ -58,6 +58,23 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/shippercode_textview"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ShipperCode"></TextView>
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
                     android:id="@+id/recipient_textview"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"

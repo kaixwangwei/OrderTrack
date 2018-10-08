@@ -37,14 +37,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-
+import me.lxl.expresstrack.zxing.StaticParam;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int ZXING_CAMERA_PERMISSION = 1;
     private static final int LOGIN_SUCCESS = 0;
     private static final int LOGIN_FAIL = 1;
-    private static final String TAG = "ExpressTrack";
+    private static final String TAG = StaticParam.TAG;
 
     private Class<?> mClss;
 
@@ -183,7 +183,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         editor.commit();
         showDiag();
-        LoginThread login = new LoginThread(this, mHandler, password, username);
+        LoginThread login = new LoginThread(this, mHandler, username, password);
         login.start();
     }
 

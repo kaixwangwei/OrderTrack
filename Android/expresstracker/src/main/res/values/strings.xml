@@ -43,6 +43,9 @@
     <string name="sync_list">同步</string>
     <string name="add_new_express">添加新的快递编号</string>
     <string name="scan_barcode_button">扫描条形码</string>
+
+    <string name="ShipperCode">快递公司名称：</string>
+
     <string name="espress_detail">快递信息详情</string>
     <string name="scan_barcode_result">请输入编号：</string>
     <string name="express_number">快递编号：</string>
@@ -71,6 +74,7 @@
     <string name="have_sync">已同步</string>
     <string name="no_sync">未同步</string>
     <string name="save_password">是否保存密码</string>
+    <string name="show_password">显示密码</string>
     <string name="login">登录</string>
     <string name="offline">离线模式</string>
 

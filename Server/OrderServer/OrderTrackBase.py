@@ -3,7 +3,8 @@ import mysql.connector
 from sqlalchemy import *
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-
+from flask_sqlalchemy import SQLAlchemy
+import config
 
 #创建mysql用户 , 并创建库， 并赋予相应权限
 #create user 'OrderTrack'@'%' identified by 'wangweiLxl';
@@ -17,14 +18,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 user_orm_url = 'mysql+mysqlconnector://OrderTrack:wangweiLxl@127.0.0.1:3306/OrderTrackDB'
 
-config = {
-    'host': '127.0.0.1',
-    'user': 'OrderTrack',
-    'password': 'wangweiLxl',
-    'port': 3306,
-    'database': 'OrderTrackDB',
-    'charset': 'utf8'
-}
+db = SQLAlchemy()
 
 engine = create_engine(user_orm_url, convert_unicode=True)
 db_session = scoped_session(sessionmaker(autocommit=False,

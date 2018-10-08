@@ -9,45 +9,39 @@ import mysql.connector
 class RecodeList(Base):
     __tablename__ = 'record_list'
 
-    id = Column('id', Integer, primary_key=True)
-    expressCode = Column('express_code', String(128), nullable=False, unique=True)
-    receiver = Column('receiver', String(128), nullable=False)
-    expressDate = Column('express_date', String(128), nullable=False)
-    creater = Column('creater', String(128), nullable=False)
-    expressMoney = Column('express_money', Float)
-    expressStatus = Column('express_status', String(1024))
-    create_time = Column('create_time', String(128))
-    update_time = Column('update_time', String(128))
-    deleted = Column('deleted', Integer, nullable=False)
+    id = Column( Integer, primary_key=True)
+    logisticCode = Column( String(128), nullable=False, unique=True)
+    shipperCode = Column( String(128), nullable=False)
+    receiver = Column( String(128), nullable=False)
+    shipDate = Column( String(128), nullable=False)
+    creater = Column( String(128), nullable=False)
+    shippingMoney = Column( Float)
+    logisticsInfo = Column( String(10240))
+    latestLogisticsInfo = Column( String(1024))
+    logisticsState = Column( Integer, nullable=False, default=0)
+    create_time = Column( String(128))
+    update_time = Column( String(128))
+    deleted = Column( Integer, nullable=False)
 
-    def __init__(self,expressCode, receiver, expressDate, creater, expressMoney, expressStatus, create_time, update_time, deleted):
-        self.expressCode = expressCode
+    def __init__(self,logisticCode, ShipperCode, receiver, shipDate, creater, shippingMoney, logisticsInfo, create_time, update_time, deleted=0):
+        self.logisticCode = logisticCode
+        self.shipperCode = ShipperCode
         self.receiver = receiver
-        self.expressDate = expressDate
+        self.shipDate = shipDate
         self.creater = creater
-        self.expressMoney = expressMoney
-        self.expressStatus = expressStatus
+        self.shippingMoney = shippingMoney
+        self.logisticsInfo = logisticsInfo
         self.create_time = create_time
         self.update_time = update_time
         self.deleted = deleted
-    
-    def __init__(self,expressCode, receiver, expressDate, creater, expressMoney, expressStatus, create_time, update_time):
-        self.expressCode = expressCode
+        self.logisticsState = 0
+
+    def update(self, receiver, shipDate, creater, shippingMoney, logisticsInfo, update_time):
         self.receiver = receiver
-        self.expressDate = expressDate
+        self.shipDate = shipDate
         self.creater = creater
-        self.expressMoney = expressMoney
-        self.expressStatus = expressStatus
-        self.create_time = create_time
-        self.update_time = update_time
-        self.deleted = 0
-        
-    def update(self, receiver, expressDate, creater, expressMoney, expressStatus, update_time):
-        self.receiver = receiver
-        self.expressDate = expressDate
-        self.creater = creater
-        self.expressMoney = expressMoney
-        self.expressStatus = expressStatus
+        self.shippingMoney = shippingMoney
+        self.logisticsInfo = logisticsInfo
         self.create_time = create_time
         self.update_time = update_time
         
@@ -55,17 +49,43 @@ class RecodeList(Base):
         self.deleted = deleted
         
     def updateFrom(self, record):
-        self.expressCode = record.expressCode
+        self.logisticCode = record.logisticCode
+        self.shipperCode = record.shipperCode
         self.receiver = record.receiver
-        self.expressDate = record.expressDate
+        self.shipDate = record.shipDate
         self.creater = record.creater
-        self.expressMoney = record.expressMoney
-        self.expressStatus = record.expressStatus
+        self.shippingMoney = record.shippingMoney
+        self.logisticsInfo = record.logisticsInfo
+        self.latestLogisticsInfo = record.latestLogisticsInfo
+        self.logisticsState = record.logisticsState
+        
         self.create_time = record.create_time
         self.update_time = record.update_time
         self.deleted = record.deleted
+    
+    def updateFromDict(self, dictT):
+        for key in dictT.keys():
+            value = dictT[key]
+            if key == "receiver":
+                self.receiver = value
+            elif key == "shipDate":
+                self.shipDate = value
+            elif key == "shipperCode":
+                self.shipperCode = value
+            elif key == "shippingMoney":
+                self.shippingMoney = value
+
+    def setLogisticsInfo(self, logisticsInfo):
+        self.logisticsInfo = logisticsInfo
+        
+    def setLatestLogisticsInfo(self, latestLogisticsInfo):
+        self.latestLogisticsInfo = latestLogisticsInfo
+
+    def setLogisticsState(self, logisticsState):
+        self.logisticsState = logisticsState
+        
         
     def __repr__(self):
-        return '<id is %s, expressCode is %s, expressDate is %s, receiver is %s, create time is %s, update time is %s ,deleted is %s>' % (
-            self.id, self.expressCode, self.expressDate, self.receiver, self.create_time, self.update_time, self.deleted)
+        return u'<id is %s, logisticCode is %s, shipperCode is %s, shipDate is %s, receiver is %s, create time is %s, update time is %s ,deleted is %s>' % (
+            self.id, self.logisticCode, self.shipperCode, self.shipDate, self.receiver, self.create_time, self.update_time, self.deleted)
 

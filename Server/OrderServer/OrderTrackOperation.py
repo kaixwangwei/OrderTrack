@@ -9,6 +9,8 @@ import flask_login
 from OrderTrackRecord import RecodeList
 import time
 import json
+from KuaiDiCX.ShipperMap import SHIPPER_MAP, getLogisticalState
+
 
 # https://spacewander.github.io/explore-flask-zh/7-blueprints.html
 # http://flask.pocoo.org/docs/0.12/blueprints/
@@ -16,22 +18,38 @@ operation = Blueprint('addnew', __name__, template_folder='operation')
 
 logger = OrderTrackLogger.get_logger(__name__)
 
+
+
+def creatLogisticalInfo(logisticsInfo):
+    retStr = u""
+    try:
+        logisticsDict = json.loads(logisticsInfo)
+        for item in reversed(logisticsDict):
+            #print item['AcceptStation']
+            retStr = retStr  + "[" + item['AcceptTime'] + "]" + item['AcceptStation'] + "</br>"
+    except :
+        retStr = ""
+    return retStr
+
+
 @operation.route("/getdata", methods=['GET','POST'])
 #@flask_login.login_required
 def getdata():
-    print("getdata")
+    print("operation getdata")
     resultDict = {}
     dataList = []
     record = OrderTrackDB.getAllExistData()
     
     for item in record:
         dictT = {}
-        dictT['express_code'] = item.expressCode
+        dictT['logisticCode'] = item.logisticCode
+        dictT['shipperCode'] = SHIPPER_MAP[item.shipperCode]
         dictT['receiver'] = item.receiver
-        dictT['express_date'] = item.expressDate
+        dictT['shipDate'] = item.shipDate
         dictT['sender'] = item.creater
-        dictT['express_money'] = item.expressMoney
-        dictT['current_status'] = item.expressStatus
+        dictT['shippingMoney'] = item.shippingMoney
+        dictT['logisticsState'] = getLogisticalState(item.logisticsState)
+        dictT['logisticsInfo'] = creatLogisticalInfo(item.logisticsInfo)
         dictT['joinTime'] = item.create_time
         dictT['updateTime'] = item.update_time
         dataList.append(dictT)
@@ -40,7 +58,7 @@ def getdata():
     resultDict['count'] = len(dataList)
     resultDict['data'] = dataList
     if request.method == 'GET':
-        print json.dumps(resultDict)
+        #print json.dumps(resultDict)
         return json.dumps(resultDict)
     else:
         return json.dumps(resultDict)
@@ -58,13 +76,14 @@ def addnew():
         localTime = time.localtime()
         strTime = time.strftime("%Y-%m-%d %H:%M:%S", localTime)
         
-        #{u'date': u'2018-09-24', u'money': u'123', u'kuaidigongshi': u'\u987a\u4e30', u'express_code': u'2131', u'receiver': u'admin'}
-        expressCode = item['express_code']
-        expressDate = item['date']
+        #{u'date': u'2018-09-24', u'money': u'123', u'kuaidigongshi': u'\u987a\u4e30', u'logisticCode': u'2131', u'receiver': u'admin'}
+        logisticCode = item['logisticCode']
+        shipperCode = item['shipperCode']
+        shipDate = item['date']
         creater = flask_login.current_user.id
-        expressMoney = item['money']
+        shippingMoney = item['money']
         receiver = item['receiver']
-        expressStatus = ""
+        logisticsInfo = ""
 
         localTime = time.localtime() 
         strTime = time.strftime("%Y-%m-%d %H:%M:%S", localTime)             
@@ -72,7 +91,7 @@ def addnew():
         create_time = strTime
         update_time = strTime
 
-        record = RecodeList(expressCode, receiver, expressDate, creater, expressMoney, expressStatus, create_time, update_time)
+        record = RecodeList(logisticCode, shipperCode, receiver, shipDate, creater, shippingMoney, logisticsInfo, create_time, update_time)
         ret = OrderTrackDB.addRecord(record)
 
         print("addnew POST")
@@ -87,11 +106,19 @@ def delete():
     if request.method == 'GET':
         return render_template('operation/addnew.html',name=flask_login.current_user.id)
     elif request.method == 'POST':
-        
         item = request.json
-        
-        print item
-        print("delete POST")
-        expressCode = item['express_code']
-        ret = OrderTrackDB.delRecord(expressCode)
+        print("operation delete POST")
+        logisticCode = item['logisticCode']
+        ret = OrderTrackDB.delRecord(logisticCode)
+        return json.dumps(ret)
+    
+@flask_login.login_required
+@operation.route('/modify', methods=['GET', 'POST'])
+def modify():
+    if request.method == 'GET':
+        return render_template('test.html',name=flask_login.current_user.id)
+    elif request.method == 'POST':
+        print("operation modify POST")        
+        item = request.json
+        ret = OrderTrackDB.modifyRecord(item)
         return json.dumps(ret)

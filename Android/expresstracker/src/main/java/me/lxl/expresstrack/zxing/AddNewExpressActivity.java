@@ -12,14 +12,18 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -36,6 +40,11 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
     private EditText mSendExpressDateEdit;
     private EditText mExpressMoneyEdit;
     private ExpressDBHelper mExpressDBHelper;
+
+    private Spinner spinner;
+    private List<String> data_list;
+    private ArrayAdapter<String> arr_adapter;
+
 
     @Override
     public void onCreate(Bundle state) {
@@ -79,6 +88,25 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+
+//        添加快递公司列表
+        spinner = (Spinner) findViewById(R.id.spinner);
+
+        //数据
+        data_list = new ArrayList<String>();
+        data_list.add("顺丰");
+        data_list.add("EMS");
+        data_list.add("圆通");
+        data_list.add("申通");
+        data_list.add("韵达");
+
+        //适配器
+        arr_adapter= new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, data_list);
+        //设置样式
+        arr_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //加载适配器
+        spinner.setAdapter(arr_adapter);
+
     }
 
     @Override

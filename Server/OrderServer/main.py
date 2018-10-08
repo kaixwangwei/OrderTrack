@@ -4,11 +4,13 @@ import json
 import os
 import random
 import time
-
+from flask_sqlalchemy import SQLAlchemy
 import flask_login
 import OrderTrackApi
 import OrderTrackDB
 import OrderTrackLogger
+from flask_migrate import Migrate,MigrateCommand
+from flask_script import Manager
 from flask import Flask, redirect, url_for, request, render_template, make_response, abort, jsonify, \
     send_from_directory
 from flask_login import LoginManager
@@ -18,6 +20,10 @@ from OrderTrackAdmin import admin
 from ClientApi import client
 from OrderTrackResource import ordertrack_resource
 from OrderTrackOperation import operation
+from OrderTrackBase import *
+from Owner import owner
+import config
+from KuaiDiCX.ShipperMap import SHIPPER_MAP, getLogisticalState
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -27,12 +33,7 @@ login_manager.login_view = 'login'
 login_manager.session_protection = 'strong'
 logger = OrderTrackLogger.get_logger(__name__)
 
-app.config['ALLOWED_EXTENSIONS'] = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
-app.config['UPLOAD_PATH'] = 'upload'
-
-app.config['UPLOADS_DEFAULT_DEST'] = app.config['UPLOAD_PATH']
-app.config['UPLOADS_DEFAULT_URL'] = 'http://127.0.0.1:9000/'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:123456@127.0.0.1:3306/testFlask'
+app.config.from_object(config)
 
 uploaded_photos = UploadSet()
 configure_uploads(app, uploaded_photos)
@@ -49,6 +50,11 @@ app.register_blueprint(client, url_prefix='/v1')
 
 app.register_blueprint(operation)
 app.register_blueprint(operation, url_prefix='/v1')
+
+app.register_blueprint(owner)
+app.register_blueprint(owner, url_prefix='/v1')
+
+
 
 # http://www.pythondoc.com/flask-login/index.html#request-loader
 # http://docs.jinkan.org/docs/flask/index.html
@@ -84,7 +90,10 @@ def setUserByDict(username, tmpUser):
     
 def setUser(username):
     user = User()
+    print("setUser username:%s"%(username))
     tmpUser = OrderTrackDB.get_user_session(username)
+    if tmpUser == None:
+        return None
     user.id = username
     
     if tmpUser.fullname == None:
@@ -98,7 +107,8 @@ def setUser(username):
 @login_manager.user_loader
 def user_loader(username):
     user = setUser(username)
-    logger.debug("user_loader user is %s, is_authenticated %s" % (user.id, user.is_authenticated))
+    if user != None:
+        logger.debug("user_loader user is %s, is_authenticated %s" % (user.id, user.is_authenticated))
     
     return user
 
@@ -131,7 +141,7 @@ def is_safe_url(next_url):
 def index():
     logger.debug("index page, method is %s " % request.method)
     print("user fullename :%s"%flask_login.current_user.fullname)
-    return render_template('index.html', username=flask_login.current_user)
+    return render_template('index.html', shipperMap = SHIPPER_MAP)
 
 
 @app.route('/error')
@@ -174,7 +184,7 @@ def login():
                 user = setUserByDict(username, tmpUser)
                 flask_login.login_user(user)
     
-                resp = make_response(render_template('index.html', name=username))
+                resp = make_response(render_template('index.html', shipperMap = SHIPPER_MAP))
                 resp.set_cookie('username', username)
                 if not is_safe_url(next_url):
                     return abort(400)
