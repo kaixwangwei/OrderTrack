@@ -1,10 +1,18 @@
 from flask_script import Manager
-from OrderTrackBase import *
-import config
+
+#python manage.py db init
+#python manage.py db migrate -m "initial migrateion"
+#python manage.py db upgrade
+
+
+import OrderConfig
 from main import app
+
+from models.Base import db
+from models.LogisticalInfo import LogisticalInfo
+from models.User import User
+
 from flask_migrate import Migrate,MigrateCommand
-from OrderTrackRecord import RecodeList
-from OrderTrackUser import User
 
 manager = Manager(app)
 

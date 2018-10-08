@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
+
+import time
+import sys
 import mysql.connector
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import OrderTrackLogger
-from OrderTrackUser import User
-from OrderTrackRecord import RecodeList
-from OrderTrackBase import *
-import time
-import sys
+
+from models.Base import *
+from models.User import User
+from models.LogisticalInfo import LogisticalInfo
+
 
 reload(sys)
 sys.setdefaultencoding("utf8")
@@ -129,14 +132,14 @@ def creatDefaultUser():
         s.commit()
         return ret
     except Exception as e:
-        logger.debug("get_user_session Exception is %s" % e)
+        logger.debug("creatDefaultUser Exception is %s" % e)
         return None
     
     
 #添加记录到数据库，返回 true , 或者 false 
 def addRecord(record):
     dictT = {}
-    tmpRecord = db_session.query(RecodeList).filter_by(logisticCode = record.logisticCode).first()
+    tmpRecord = db_session.query(LogisticalInfo).filter_by(logisticCode = record.logisticCode).first()
     dictT['logisticCode'] = record.logisticCode
     print record
     if tmpRecord and tmpRecord.deleted == 0:
@@ -162,7 +165,7 @@ def addRecord(record):
 def delRecord(logistic_Code):
     print ("delRecord")
     dictT = {}
-    tmpRecord = db_session.query(RecodeList).filter_by(logisticCode = logistic_Code).first()
+    tmpRecord = db_session.query(LogisticalInfo).filter_by(logisticCode = logistic_Code).first()
     if tmpRecord:
         tmpRecord.deleted = 1
         db_session.add(tmpRecord)
@@ -181,7 +184,7 @@ def delRecord(logistic_Code):
 def updateRecord(recordDict):
     print ("updateRecord")
     dictT = {}
-    tmpRecord = db_session.query(RecodeList).filter_by(logisticCode = recordDict.logisticCode).first()
+    tmpRecord = db_session.query(LogisticalInfo).filter_by(logisticCode = recordDict.logisticCode).first()
     if tmpRecord:
         tmpRecord.updateFrom(recordDict)
         db_session.add(tmpRecord)
@@ -201,7 +204,7 @@ def modifyRecord(tDict):
     dictT = {}
     tmpRecord = None
     if tDict.has_key("logisticCode") == True:
-        tmpRecord = db_session.query(RecodeList).filter_by(logisticCode = tDict["logisticCode"]).first()
+        tmpRecord = db_session.query(LogisticalInfo).filter_by(logisticCode = tDict["logisticCode"]).first()
     if tmpRecord:
         tmpRecord.updateFromDict(tDict)
         db_session.add(tmpRecord)
@@ -219,12 +222,12 @@ def modifyRecord(tDict):
 
 #读取没有被标记为删除的项目
 def getAllExistData():
-    record = db_session.query(RecodeList).filter(RecodeList.deleted == 0).filter_by().all()
+    record = db_session.query(LogisticalInfo).filter(LogisticalInfo.deleted == 0).filter_by().all()
     return record
 
 #读取快递信息未完成的项目
 def getAllNeedSyncLogistical():
-    record = db_session.query(RecodeList).filter(RecodeList.logisticsState != 3).filter(RecodeList.deleted == 0).filter_by().all()
+    record = db_session.query(LogisticalInfo).filter(LogisticalInfo.logisticsState != 3).filter(LogisticalInfo.deleted == 0).filter_by().all()
     return record
 
 

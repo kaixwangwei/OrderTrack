@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from OrderTrackBase import *
+from models.Base import *
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 import mysql.connector
 
 #http://docs.sqlalchemy.org/en/latest/orm/mapping_columns.html
-class User(Base):
+class User(db.Model):
     __tablename__ = 'users'
 
     id = Column('id', Integer, primary_key=True)
@@ -19,16 +19,7 @@ class User(Base):
     create_time = Column('create_time', String(128))
     update_time = Column('update_time', String(128))
 
-    def __init__(self, username,  password):
-        self.username = username
-        self.password = password
-
-    def __init__(self, username, password, role):
-        self.username = username
-        self.password = password
-        self.role = role
-    
-    def __init__(self, username, fullname, password, phone, email, role, group_name, create_time, update_time):
+    def __init__(self, username, password, role = 0, fullname = None, phone = None, email = None, group_name = None, create_time = None, update_time = None):
         self.username = username
         self.password = password
         self.fullname = fullname

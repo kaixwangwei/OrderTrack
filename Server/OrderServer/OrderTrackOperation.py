@@ -6,7 +6,7 @@ import OrderTrackLogger
 import OrderTrackDB
 import time
 import flask_login
-from OrderTrackRecord import RecodeList
+from models.LogisticalInfo import LogisticalInfo
 import time
 import json
 from KuaiDiCX.ShipperMap import SHIPPER_MAP, getLogisticalState
@@ -91,7 +91,7 @@ def addnew():
         create_time = strTime
         update_time = strTime
 
-        record = RecodeList(logisticCode, shipperCode, receiver, shipDate, creater, shippingMoney, logisticsInfo, create_time, update_time)
+        record = LogisticalInfo(logisticCode, shipperCode, receiver, shipDate, creater, shippingMoney, logisticsInfo, create_time, update_time)
         ret = OrderTrackDB.addRecord(record)
 
         print("addnew POST")

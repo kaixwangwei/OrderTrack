@@ -3,9 +3,8 @@ from flask import *
 from flask_sqlalchemy import SQLAlchemy
 import OrderTrackLogger
 import OrderTrackDB
-from OrderTrackRecord import RecodeList
+from models.LogisticalInfo import LogisticalInfo
 import time
-from OrderTrackBase import *
 import json
 import flask_login
 

@@ -6,9 +6,6 @@ import random
 import time
 from flask_sqlalchemy import SQLAlchemy
 import flask_login
-import OrderTrackApi
-import OrderTrackDB
-import OrderTrackLogger
 from flask_migrate import Migrate,MigrateCommand
 from flask_script import Manager
 from flask import Flask, redirect, url_for, request, render_template, make_response, abort, jsonify, \
@@ -16,13 +13,20 @@ from flask import Flask, redirect, url_for, request, render_template, make_respo
 from flask_login import LoginManager
 from flask_restful import Api
 from flask_uploads import UploadSet, configure_uploads
+
+from models.Base import db
+from models.LogisticalInfo import LogisticalInfo
+from models.User import User
+
+import OrderTrackApi
+import OrderTrackDB
+import OrderTrackLogger
 from OrderTrackAdmin import admin
 from ClientApi import client
 from OrderTrackResource import ordertrack_resource
 from OrderTrackOperation import operation
-from OrderTrackBase import *
 from Owner import owner
-import config
+import OrderConfig
 from KuaiDiCX.ShipperMap import SHIPPER_MAP, getLogisticalState
 
 app = Flask(__name__)
@@ -33,7 +37,10 @@ login_manager.login_view = 'login'
 login_manager.session_protection = 'strong'
 logger = OrderTrackLogger.get_logger(__name__)
 
-app.config.from_object(config)
+app.config.from_object(OrderConfig)
+db.init_app(app)
+with app.test_request_context():
+    db.create_all()
 
 uploaded_photos = UploadSet()
 configure_uploads(app, uploaded_photos)

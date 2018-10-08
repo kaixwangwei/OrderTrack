@@ -4,7 +4,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from flask_sqlalchemy import SQLAlchemy
-import config
+from OrderConfig import *
 
 #创建mysql用户 , 并创建库， 并赋予相应权限
 #create user 'OrderTrack'@'%' identified by 'wangweiLxl';
@@ -16,7 +16,7 @@ import config
 #update user set authentication_string=password('wangweiLxl') where user='root';
 #flush privileges;
 
-user_orm_url = 'mysql+mysqlconnector://OrderTrack:wangweiLxl@127.0.0.1:3306/OrderTrackDB'
+user_orm_url = SQLALCHEMY_DATABASE_URI
 
 db = SQLAlchemy()
 
@@ -26,3 +26,5 @@ db_session = scoped_session(sessionmaker(autocommit=False,
                                          bind=engine))
 Base = declarative_base()
 Base.query = db_session.query_property()
+
+

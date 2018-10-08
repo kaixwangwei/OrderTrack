@@ -1,6 +1,6 @@
 
-host = '127.0.0.1',
-user = 'OrderTrack',
+host = '127.0.0.1'
+user = 'OrderTrack'
 password = 'wangweiLxl'
 port = 3306
 database = 'OrderTrackDB'

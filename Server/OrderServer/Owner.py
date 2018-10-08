@@ -6,7 +6,7 @@ import OrderTrackLogger
 import OrderTrackDB
 import time
 import flask_login
-from OrderTrackUser import User
+from models.User import User
 import time
 import json
 

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from OrderTrackBase import Base
+from models.Base import *
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 import mysql.connector
 
 # http://docs.sqlalchemy.org/en/latest/orm/mapping_columns.html
-class RecodeList(Base):
-    __tablename__ = 'record_list'
+class LogisticalInfo(db.Model):
+    __tablename__ = 'logistical_list'
 
     id = Column( Integer, primary_key=True)
     logisticCode = Column( String(128), nullable=False, unique=True)
