@@ -9,7 +9,7 @@ import OrderConfig
 from main import app
 
 from models.Base import db
-from models.LogisticalInfo import LogisticalInfo
+from models.LogisticsInfo import LogisticsInfo
 from models.User import User
 
 from flask_migrate import Migrate,MigrateCommand

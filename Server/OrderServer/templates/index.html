@@ -55,8 +55,8 @@ layui.use('table', function(){
     <!--,toolbar: toolbarDemo-->
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
-      ,{field:'logisticCode', title:'快递编号', width:180, fixed: 'left', unresize: true, sort: true}
-      ,{field:'shipperCode', title:'快递公司', width:120, sort:true, templet: function (d) {
+      ,{field:'logisticsCode', title:'快递编号', width:180, fixed: 'left', unresize: true, sort: true}
+      ,{field:'shipperCodeCH', title:'快递公司', width:120, sort:true, templet: function (d) {
         // 模板的实现方式也是多种多样，这里简单返回固定的
         return createSelect(d)
 
@@ -80,12 +80,12 @@ layui.use('table', function(){
     ,field = obj.field; //得到字段
     var title = getTitleByField(field);
     
-    if (editLineLogisticalID == data.logisticCode) {
-        ret = modifyData(data.logisticCode, field, title, obj.value);
+    if (editLineLogisticalID == data.logisticsCode) {
+        ret = modifyData(data.logisticsCode, field, title, obj.value);
     } else {
-          var msg = '真的修改吗</br>' + '[快递编号: '+ data.logisticCode +'] ' + title + ' 字段更改为：'+ value
+          var msg = '真的修改吗</br>' + '[快递编号: '+ data.logisticsCode +'] ' + title + ' 字段更改为：'+ value
           layer.confirm(msg, function(index){
-          ret = modifyData(data.logisticCode, field, title, obj.value);
+          ret = modifyData(data.logisticsCode, field, title, obj.value);
           layer.close(index);
       });
     }
@@ -121,9 +121,9 @@ layui.use('table', function(){
       });
     } else if(obj.event === 'startEdit'){
         var data = obj.data ;
-        var msg = '真的修改此行吗</br>' + '[快递编号: '+ data.logisticCode + ']'
+        var msg = '真的修改此行吗</br>' + '[快递编号: '+ data.logisticsCode + ']'
         layer.confirm(msg, function(index){
-            editLineLogisticalID = data.logisticCode;
+            editLineLogisticalID = data.logisticsCode;
             layer.close(index);
           });
     }
@@ -148,10 +148,10 @@ function deleteItem(obj, data)
       });
 }
 
-function modifyData(logisticCode, field, title, value)
+function modifyData(logisticsCode, field, title, value)
 {
     var jsonData = {
-        "logisticCode":logisticCode ,
+        "logisticsCode":logisticsCode ,
     };
     jsonData[field] = value;
     $.ajax({
@@ -162,7 +162,7 @@ function modifyData(logisticCode, field, title, value)
       success: function (info) {
           var dataObj = eval("("+info+")");
           if (dataObj.code === 1) {
-            layer.msg('已经修改</br>' + '[快递编号: '+ logisticCode +'] ' + title + ' 字段更改为：'+ value);
+            layer.msg('已经修改</br>' + '[快递编号: '+ logisticsCode +'] ' + title + ' 字段更改为：'+ value);
           } else {
             alert("修改失败原因： " + dataObj.reason + ",请回到主页之后再次确认，谢谢！");
           }
@@ -188,17 +188,17 @@ function getTitleByField(field)
 }
 
 function shipperSelect(a) {
-    var logisticCode = $(a).attr('data-id')
+    var logisticsCode = $(a).attr('data-id')
     var value = $(a).val()
     var field = "shipperCode"
     var title = "快递公司"
     
-    if (editLineLogisticalID == logisticCode) {
-        ret = modifyData(logisticCode, field, title, value);
+    if (editLineLogisticalID == logisticsCode) {
+        ret = modifyData(logisticsCode, field, title, value);
     } else {
-          var msg = '真的修改吗</br>' + '[快递编号: '+ logisticCode +'] ' + title + ' 字段更改为：'+ value
+          var msg = '真的修改吗</br>' + '[快递编号: '+ logisticsCode +'] ' + title + ' 字段更改为：'+ value
           layer.confirm(msg, function(index){
-          ret = modifyData(logisticCode, field, title, value);
+          ret = modifyData(logisticsCode, field, title, value);
           layer.close(index);
       });
     }
@@ -206,9 +206,9 @@ function shipperSelect(a) {
 
 function createSelect(d)
 {
-  var selectStr = '<select class="shipperSelectCSS" lay-ignore data-id="' + d.logisticCode + '" data-value="' + d.shipperCode + '" onchange="shipperSelect(this)">'
+  var selectStr = '<select class="shipperSelectCSS" lay-ignore data-id="' + d.logisticsCode + '" data-value="' + d.shipperCode + '" onchange="shipperSelect(this)">'
       {% for item in shipperMap.keys() %}
-        if(d.shipperCode == "{{shipperMap[item]}}") {
+        if(d.shipperCodeCH == "{{shipperMap[item]}}") {
           <!--alert(d.shipperCode + " " + "{{shipperMap[item]}}");-->
           selectStr = selectStr + '<option  value="{{ item }}" selected=""> {{ shipperMap[item] }} </option>'
         } else {

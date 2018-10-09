@@ -8,7 +8,7 @@ public class StaticParam
     public static final String TAG = "ExpressTrack";
     public static final String SYNC_ACTION = "me.lxl.expresstrack.zxing.SyncService.startsync";
 
-    public static final String SERVER_IP = "132.232.23.28";
+    public static final String SERVER_IP = "192.168.0.102";//"132.232.23.28";
     public static final String SERVER_PORT = "9000";
     public static final String CLIENT_TO_SERVER_ADDR = "http://" + SERVER_IP + ":" + SERVER_PORT + "/client/insertrecord";
     public static final String SYNC_FROM_SERVER_ADDR = "http://" + SERVER_IP + ":" + SERVER_PORT + "/client/getdata";

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, render_template, jsonify
-from flask import Flask, redirect, url_for, request, render_template, make_response, abort, jsonify, \
-    send_from_directory
+from flask import Blueprint, render_template, jsonify, send_from_directory
+from flask import Flask, redirect, url_for, request, make_response, abort
+
 import OrderTrackLogger
 import OrderTrackDB
 import time

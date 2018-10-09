@@ -9,15 +9,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class ExpressDetail extends AppCompatActivity implements View.OnClickListener
 {
-    private final String TAG = StaticParam.TAG;
-    private ExpressInfo mExpressInfo = null;
+    private static final String TAG = StaticParam.TAG;
+    private LogisticsInfo mLogisticsInfo = null;
     private Button mDeleteButton = null;
     private Button mModifyButton = null;
     private Button mCancelButton = null;
@@ -30,18 +32,18 @@ public class ExpressDetail extends AppCompatActivity implements View.OnClickList
     private final int MODEFY_MODE = 0;
     private final int NORMAL_MODE = 1;
 
-    private ExpressDBHelper mExpressDBHelper;
+    private static LogisticsDBHelper mLogisticsDBHelper;
 
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.express_detail);
         Intent intent = getIntent();
-        if(intent == null || intent.hasExtra("ExpressInfo") == false) {
+        if(intent == null || intent.hasExtra("LogisticsInfo") == false) {
             finish();
         }
-        mExpressInfo = intent.getParcelableExtra("ExpressInfo");
-        mExpressDBHelper = ExpressDBHelper.getInstance(this);
+        mLogisticsInfo = intent.getParcelableExtra("LogisticsInfo");
+        mLogisticsDBHelper = LogisticsDBHelper.getInstance(this);
         setupToolbar();
         initView();
         initValue();
@@ -76,11 +78,11 @@ public class ExpressDetail extends AppCompatActivity implements View.OnClickList
 
     private void initValue()
     {
-        mExpressCode.setText(mExpressInfo.getExpressCode());
-        mReceiver.setText(mExpressInfo.getReceiver());
-        mMoney.setText(mExpressInfo.getExpressMoney() + "");
-        mSendDate.setText(mExpressInfo.getExpressDate());
-        mLogisticsStatus.setText(mExpressInfo.getLastLogisticsInfo());
+        mExpressCode.setText(mLogisticsInfo.getLogisticsCode());
+        mReceiver.setText(mLogisticsInfo.getReceiver());
+        mMoney.setText(mLogisticsInfo.getShippingMoney() + "");
+        mSendDate.setText(mLogisticsInfo.getShipDate());
+        mLogisticsStatus.setText(mLogisticsInfo.getLastLogisticsInfo());
     }
 
     @Override
@@ -112,47 +114,47 @@ public class ExpressDetail extends AppCompatActivity implements View.OnClickList
     private void saveExpress()
     {
         changeMode(NORMAL_MODE);
-        mExpressInfo.setExpressDate(mSendDate.getText().toString());
-        mExpressInfo.setReceiver(mReceiver.getText().toString());
-        mExpressInfo.setExpressMoney(StaticParam.parseMoney(mMoney.getText().toString()));
+        mLogisticsInfo.setLogisticsCode(mSendDate.getText().toString());
+        mLogisticsInfo.setReceiver(mReceiver.getText().toString());
+        mLogisticsInfo.setShippingMoney(StaticParam.parseMoney(mMoney.getText().toString()));
 
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("owner", StaticParam.mUserName);
-            jsonObject.put("expressCode", mExpressInfo.getExpressCode());
-            jsonObject.put("receiver", mExpressInfo.getReceiver());
-            jsonObject.put("expressDate", mExpressInfo.getExpressDate());
-            jsonObject.put("expressMoney", mExpressInfo.getExpressMoney());
-            jsonObject.put("syncToServer", mExpressInfo.getSyncToServer());
+            jsonObject.put("expressCode", mLogisticsInfo.getLogisticsCode());
+            jsonObject.put("receiver", mLogisticsInfo.getReceiver());
+            jsonObject.put("expressDate", mLogisticsInfo.getShipDate());
+            jsonObject.put("expressMoney", mLogisticsInfo.getShippingMoney());
+            jsonObject.put("syncToServer", mLogisticsInfo.getSyncToServer());
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
         String serverResponse = HttpConnectHelper.post(jsonObject, StaticParam.UPDATE_ADDR);
 
-        long id = mExpressDBHelper.update(mExpressInfo);
+        long id = mLogisticsDBHelper.update(mLogisticsInfo);
     }
 
     private void deleteExpress()
     {
-        Log.d(TAG, "deleteExpress :" + mExpressInfo.getExpressCode());
+        Log.d(TAG, "deleteExpress :" + mLogisticsInfo.getLogisticsCode());
 
         JSONObject jsonOwnerObject = new JSONObject();
         try {
-            jsonOwnerObject.put("express_code", mExpressInfo.getExpressCode());
+            jsonOwnerObject.put("logisticsCode", mLogisticsInfo.getLogisticsCode());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         Log.i(TAG,"  syncFromServer jsonObject : " + jsonOwnerObject.toString());
 
-        String serverResponse = HttpConnectHelper.post(jsonOwnerObject, StaticParam.DELETE_ADDR);
-        finish();
+        MyThread myThread = new MyThread(this, jsonOwnerObject);
+        myThread.start();
     }
 
     private void modifyExpress()
     {
-        Log.d(TAG, "modifyExpress :" + mExpressInfo.getExpressCode());
+        Log.d(TAG, "modifyExpress :" + mLogisticsInfo.getLogisticsCode());
         changeMode(MODEFY_MODE);
     }
 
@@ -174,6 +176,45 @@ public class ExpressDetail extends AppCompatActivity implements View.OnClickList
             mReceiver.setEnabled(false);
             mSendDate.setEnabled(false);
             mMoney.setEnabled(false);
+        }
+    }
+
+    private static class MyThread extends Thread {
+        WeakReference<ExpressDetail> mThreadActivityRef;
+        JSONObject mJsonOwnerObject;
+        String mLogisticsCode = "";
+        public MyThread(ExpressDetail activity, JSONObject jsonOwnerObject) {
+            mThreadActivityRef = new WeakReference<ExpressDetail>(
+                    activity);
+            mJsonOwnerObject = jsonOwnerObject;
+            mLogisticsCode = mJsonOwnerObject.optString("logisticsCode");
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            if (mThreadActivityRef == null)
+                return;
+
+            String serverResponse = HttpConnectHelper.post(mJsonOwnerObject, StaticParam.DELETE_ADDR);
+            Log.d(TAG, "[ExpressDetail]serverResponse = " + serverResponse);
+
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = new JSONObject(serverResponse);
+                int resultCode = jsonObject.optInt("code");
+                if(resultCode == 1) {
+                    mLogisticsDBHelper.delete(mLogisticsCode);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            if (mThreadActivityRef.get() != null) {
+                mThreadActivityRef.get().finish();
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -39,12 +41,12 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
     private EditText mRecipientEdit;
     private EditText mSendExpressDateEdit;
     private EditText mExpressMoneyEdit;
-    private ExpressDBHelper mExpressDBHelper;
+    private LogisticsDBHelper mLogisticsDBHelper;
 
     private Spinner spinner;
     private List<String> data_list;
     private ArrayAdapter<String> arr_adapter;
-
+    private SharedPreferences mSharedPreferences;
 
     @Override
     public void onCreate(Bundle state) {
@@ -52,7 +54,9 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
         setContentView(R.layout.add_new_express);
         setupToolbar();
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
-        mExpressDBHelper = ExpressDBHelper.getInstance(this);
+        mLogisticsDBHelper = LogisticsDBHelper.getInstance(this);
+        mSharedPreferences = getPreferences(AppCompatActivity.MODE_PRIVATE);
+
         initView();
     }
 
@@ -94,11 +98,24 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
 
         //数据
         data_list = new ArrayList<String>();
-        data_list.add("顺丰");
+        data_list.add("顺丰速运");
+        data_list.add("百世快递");
+        data_list.add("中通快递");
+        data_list.add("申通快递");
+        data_list.add("圆通速递");
+        data_list.add("韵达速递");
+        data_list.add("邮政快递包裹");
         data_list.add("EMS");
-        data_list.add("圆通");
-        data_list.add("申通");
-        data_list.add("韵达");
+        data_list.add("天天快递");
+        data_list.add("京东快递");
+        data_list.add("优速快递");
+        data_list.add("德邦快递");
+        data_list.add("宅急送");
+        data_list.add("TNT快递");
+        data_list.add("UPS");
+        data_list.add("DHL");
+        data_list.add("FEDEX联邦(国内件）");
+        data_list.add("FEDEX联邦(国际件）");
 
         //适配器
         arr_adapter= new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, data_list);
@@ -107,6 +124,11 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
         //加载适配器
         spinner.setAdapter(arr_adapter);
 
+        String shipperStr = mSharedPreferences.getString("shipperStr", "");
+        if(shipperStr != null && shipperStr != "") {
+            int position = arr_adapter.getPosition(shipperStr);
+            spinner.setSelection(position);
+        }
     }
 
     @Override
@@ -151,15 +173,66 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
         }
     }
 
+    private String getShipperCode(String shipperStr)
+    {
+        String shipperCode = "ERR";
+        if("顺丰速运".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "SF";
+        } else if("百世快递".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "HTKY";
+        }else if("中通快递".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "ZTO";
+        }else if("申通快递".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "STO";
+        }else if("圆通速递".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "YTO";
+        }else if("韵达速递".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "YD";
+        }else if("邮政快递包裹".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "YZPY";
+        }else if("EMS".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "EMS";
+        }else if("天天快递".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "HHTT";
+        }else if("京东快递".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "JD";
+        }else if("优速快递".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "UC";
+        }else if("德邦快递".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "DBL";
+        }else if("宅急送".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "ZJS";
+        }else if("TNT快递".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "TNT";
+        }else if("UPS".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "UPS";
+        }else if("DHL".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "DHL";
+        }else if("FEDEX联邦(国内件）".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "FEDEX";
+        }else if("FEDEX联邦(国际件）".compareToIgnoreCase(shipperStr) == 0) {
+            shipperCode = "FEDEX_GJ";
+        }
+        Log.d(TAG, "getShipperCode shipperStr = " + shipperStr + ", shipperCode = " + shipperCode);
+        return shipperCode;
+    }
+
     private void AddExpressItem() {
 
-        String expressCode = mExpressCodeEdit.getText().toString();
-        Log.d(TAG, "AddExpressItem expressCode =" + expressCode + ",");
-        if (expressCode == null || expressCode.equalsIgnoreCase("")) {
+        String logisticsCode = mExpressCodeEdit.getText().toString();
+        Log.d(TAG, "AddExpressItem logisticsCode =" + logisticsCode + ",");
+        if (logisticsCode == null || logisticsCode.equalsIgnoreCase("")) {
             showErrorDialog(getString(R.string.express_code_error_msg));
             return;
         }
 
+        String shipperStr = spinner.getSelectedItem().toString();
+        String shipperCode = getShipperCode(shipperStr);
+
+
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString("shipperStr", shipperStr);
+        editor.commit();
 
         String receiver = mRecipientEdit.getText().toString();
         Log.d(TAG, "AddExpressItem receiver =" + receiver + ",");
@@ -167,14 +240,14 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
             showErrorDialog(getString(R.string.add_receiver_error_msg));
             return;
         }
+        String creater = StaticParam.mUserName;
+        String shipDate = mSendExpressDateEdit.getText().toString();
+        float shippingMoney = parseMoney(mExpressMoneyEdit.getText().toString());
+        Log.d(TAG, "AddExpressItem:logisticsCode:" + logisticsCode + ",receiver:" + receiver + ",shipDate:" + shipDate + ",shippingMoney:" + shippingMoney);
 
-        String sendExpressDate = mSendExpressDateEdit.getText().toString();
-        float money = parseMoney(mExpressMoneyEdit.getText().toString());
-        Log.d(TAG, "AddExpressItem:expressCode:" + expressCode + ",receiver:" + receiver + ",sendExpressDate:" + sendExpressDate + ",money:" + money);
+        LogisticsInfo logisticsInfo = new LogisticsInfo(logisticsCode, shipperCode, receiver, creater, shipDate, shippingMoney);
 
-        ExpressInfo expressInfo = new ExpressInfo(expressCode, receiver, sendExpressDate, money);
-
-        long id = mExpressDBHelper.insert(expressInfo);
+        long id = mLogisticsDBHelper.insert(logisticsInfo);
         if (id > 0) {
             //启动同步机制
             Intent i = new Intent(this, SyncService.class);
@@ -198,13 +271,13 @@ public class AddNewExpressActivity extends AppCompatActivity implements View.OnC
     }
 
     private float parseMoney(String moneyStr) {
-        float money = 0.0f;
+        float shippingMoney = 0.0f;
         try {
-            money = Float.parseFloat(moneyStr);
+            shippingMoney = Float.parseFloat(moneyStr);
         } catch (Exception e) {
 
         }
-        return money;
+        return shippingMoney;
     }
 
     private String getCurrentDate() {

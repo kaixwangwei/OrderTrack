@@ -50,6 +50,7 @@
     <string name="scan_barcode_result">请输入编号：</string>
     <string name="express_number">快递编号：</string>
     <string name="recipient">收件人：</string>
+    <string name="sender">寄件人：</string>
     <string name="add_express_date">寄件时间：</string>
     <string name="add_new_express_complete">完成</string>
     <string name="delete_express">删除</string>

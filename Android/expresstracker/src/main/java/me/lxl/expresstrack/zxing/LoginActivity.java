@@ -175,7 +175,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             editor.putString("username", username);
             editor.putString("password", password);
             editor.putBoolean("savepassword", true);
-
         } else {
             editor.remove("username");
             editor.remove("password");
@@ -291,12 +290,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                     is.close();
 
-                    Log.d(TAG, "serverResponse = " + serverResponse + " , " + serverResponse.equalsIgnoreCase("success"));
+//                    Log.d(TAG, "serverResponse = " + serverResponse + " , " + serverResponse.equalsIgnoreCase("success"));
 
                     //对返回的数据serverResponse进行操作
                     if (serverResponse.equalsIgnoreCase("success")) {
                         //启动mainactivity
-                        Log.d(TAG, "0002 serverResponse = " + serverResponse);
+//                        Log.d(TAG, "0002 serverResponse = " + serverResponse);
                         StaticParam.mUserName = mUserName;
                         StaticParam.mPassword = mPassWord;
                         mHandler.sendEmptyMessage(LOGIN_SUCCESS);

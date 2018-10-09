@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity implements XListView.IXListV
     private static String TAG = "ExpressTrack";
     private static final int ZXING_CAMERA_PERMISSION = 1;
     private Class<?> mClss;
-    private ExpressDBHelper mExpressDBHelper;
-    private List<ExpressInfo> list;
+    private LogisticsDBHelper mLogisticsDBHelper;
+    private List<LogisticsInfo> list;
     private Handler mHandler;
 
     private XListView mExpressListView;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements XListView.IXListV
     @Override
     protected void onResume() {
         super.onResume();
-        list = mExpressDBHelper.queryAll();
+        list = mLogisticsDBHelper.queryAll();
         mAdapter.notifyDataSetChanged();
     }
 
@@ -77,9 +77,9 @@ public class MainActivity extends AppCompatActivity implements XListView.IXListV
         //添加监听器，监听条目点击事件
         mExpressListView.setOnItemClickListener(new MyOnItemClickListener());
 
-        mExpressDBHelper = ExpressDBHelper.getInstance(this);
+        mLogisticsDBHelper = LogisticsDBHelper.getInstance(this);
         //从数据库查询出所有数据
-        list = mExpressDBHelper.queryAll();
+        list = mLogisticsDBHelper.queryAll();
         mAdapter = new MyAdapter();
         mExpressListView.setAdapter(mAdapter);//给ListView添加适配器(自动把数据生成条目)
         Log.d(TAG, "MainActivity initListView");
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements XListView.IXListV
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                list = mExpressDBHelper.queryAll();
+                list = mLogisticsDBHelper.queryAll();
                 mAdapter.notifyDataSetChanged();
 
                 mExpressListView.setAdapter(mAdapter);
@@ -157,27 +157,28 @@ public class MainActivity extends AppCompatActivity implements XListView.IXListV
             //获取视图中的TextView
             TextView expressCode = (TextView) item.findViewById(R.id.express_code);
             TextView receiver = (TextView) item.findViewById(R.id.receiver);
+            TextView sender = (TextView) item.findViewById(R.id.sender);
             TextView mailingTime = (TextView) item.findViewById(R.id.mailingtime);
             TextView currentState = (TextView) item.findViewById(R.id.current_state);
             TextView lastLogisticStatus = (TextView) item.findViewById(R.id.last_logistics_state);
 
-            //根据当前位置获取 ExpressInfo 对象
-            final ExpressInfo expressInfo = list.get(position);
+            //根据当前位置获取 LogisticsInfo 对象
+            final LogisticsInfo logisticsInfo = list.get(position);
 
             //把Account对象中的数据放到TextView中
-            expressCode.setText(expressInfo.getExpressCode() + "");
-            receiver.setText(expressInfo.getReceiver());
-            mailingTime.setText(expressInfo.getExpressDate());
+            expressCode.setText(logisticsInfo.getLogisticsCode() + "");
+            receiver.setText(logisticsInfo.getReceiver());
+            sender.setText(logisticsInfo.getCreater());
+            mailingTime.setText(logisticsInfo.getShipDate());
+            lastLogisticStatus.setText(logisticsInfo.getLastLogisticsInfo());
             int syncResId;
-            if(expressInfo.getSyncToServer() == 1){
+            if(logisticsInfo.getSyncToServer() == 1){
                 syncResId = R.string.have_sync;
             } else {
                 syncResId = R.string.no_sync;
             }
             currentState.setText(getString(syncResId));
-            lastLogisticStatus.setText(expressInfo.getLastLogisticsInfo());
-
-
+            lastLogisticStatus.setText(logisticsInfo.getLastLogisticsInfo());
             return item;
         }
     }
@@ -186,16 +187,16 @@ public class MainActivity extends AppCompatActivity implements XListView.IXListV
     private class MyOnItemClickListener implements AdapterView.OnItemClickListener{
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            ExpressInfo expressInfo = (ExpressInfo) parent.getItemAtPosition(position);
+            LogisticsInfo logisticsInfo = (LogisticsInfo) parent.getItemAtPosition(position);
             Intent intent = new Intent(MainActivity.this, ExpressDetail.class);
-            intent.putExtra("ExpressInfo",expressInfo);
+            intent.putExtra("LogisticsInfo",logisticsInfo);
             startActivity(intent);
-            Toast.makeText(getApplicationContext(), expressInfo.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), logisticsInfo.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 
     public void refreshExpressList(View v) {
-        list = mExpressDBHelper.queryAll();
+        list = mLogisticsDBHelper.queryAll();
         mAdapter.notifyDataSetChanged();
     }
 

@@ -15,10 +15,8 @@ from flask_restful import Api
 from flask_uploads import UploadSet, configure_uploads
 
 from models.Base import db
-from models.LogisticalInfo import LogisticalInfo
-from models.User import User
+from models.LogisticsInfo import LogisticsInfo
 
-import OrderTrackApi
 import OrderTrackDB
 import OrderTrackLogger
 from OrderTrackAdmin import admin
@@ -28,11 +26,16 @@ from OrderTrackOperation import operation
 from Owner import owner
 import OrderConfig
 from KuaiDiCX.ShipperMap import SHIPPER_MAP, getLogisticalState
+from Index import index
+from Login import login
+from User import User
+from SyncLogistics import *
+
 
 app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+login_manager.login_view = '/login'
 # login_manager.login_message = 'please login!'
 login_manager.session_protection = 'strong'
 logger = OrderTrackLogger.get_logger(__name__)
@@ -45,56 +48,25 @@ with app.test_request_context():
 uploaded_photos = UploadSet()
 configure_uploads(app, uploaded_photos)
 api = Api(app)
-api.add_resource(OrderTrackApi.MonitorApi, '/api/<id>')
 
 app.register_blueprint(ordertrack_resource)
 
 app.register_blueprint(admin)
-app.register_blueprint(admin, url_prefix='/v1')
 
 app.register_blueprint(client)
-app.register_blueprint(client, url_prefix='/v1')
 
 app.register_blueprint(operation)
-app.register_blueprint(operation, url_prefix='/v1')
 
 app.register_blueprint(owner)
-app.register_blueprint(owner, url_prefix='/v1')
+
+app.register_blueprint(index)
+
+app.register_blueprint(login)
+
+#注册蓝图的时候加前缀
+#app.register_blueprint(login, url_prefix='/v1')
 
 
-
-# http://www.pythondoc.com/flask-login/index.html#request-loader
-# http://docs.jinkan.org/docs/flask/index.html
-# http://flask-login.readthedocs.io/en/latest/#login-example
-class User(flask_login.UserMixin):
-    def __init__(self):
-        self.role = object
-        self.fullname = None
-
-
-def log(*text):
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kw):
-            logger.debug('执行方法：%s，请求参数：%s():' % (func.__name__, text))
-            return func(*args, **kw)
-
-        return wrapper
-
-    return decorator
-
-def setUserByDict(username, tmpUser):
-    user = User()
-    user.id = username
-    
-    if tmpUser.fullname == None:
-        user.fullname = tmpUser.username
-    else:
-        user.fullname = tmpUser.fullname
-    user.role = tmpUser.role
-    print("user.fullname = %s, user.role = %s"%(user.fullname, user.role))
-    return user
-    
 def setUser(username):
     user = User()
     print("setUser username:%s"%(username))
@@ -136,21 +108,6 @@ def request_loader(req):
     return None
 
 
-
-def is_safe_url(next_url):
-    logger.debug("next url is %s:" % next_url)
-    return True
-
-
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
-@flask_login.login_required
-def index():
-    logger.debug("index page, method is %s " % request.method)
-    print("user fullename :%s"%flask_login.current_user.fullname)
-    return render_template('index.html', shipperMap = SHIPPER_MAP)
-
-
 @app.route('/error')
 @app.errorhandler(400)
 @app.errorhandler(401)
@@ -167,63 +124,7 @@ def error(e):
             return render_template('error.html')
     except Exception as e:
         logger.debug('exception is %s' % e)
-    finally:
         return render_template('error.html')
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        logger.debug("login post method")
-        username = request.form['username']
-        password = request.form['password']
-
-        tmpUser = OrderTrackDB.get_user_session(username)
-        if tmpUser != None:
-            logger.debug('db user id is %s, detail is %s' % (tmpUser.username, tmpUser))
-
-            next_url = request.args.get("next")
-            logger.debug('next is %s' % next_url)
-
-            if password == tmpUser.password and username == tmpUser.username:
-                # set login user
-                print("admin login success")
-                user = setUserByDict(username, tmpUser)
-                flask_login.login_user(user)
-    
-                resp = make_response(render_template('index.html', shipperMap = SHIPPER_MAP))
-                resp.set_cookie('username', username)
-                if not is_safe_url(next_url):
-                    return abort(400)
-                return redirect(next_url or url_for('index'))
-            else:
-                return abort(401)
-        else:
-            return abort(401)
-
-    logger.debug("login get method")
-    return render_template('login.html')
-
-
-@app.route('/logout')
-@flask_login.login_required
-def logout():
-    # remove the username from the session if it's there
-    logger.debug("logout page")
-    flask_login.logout_user()
-    return redirect(url_for('login'))
-
-
-@app.route('/detail')
-@flask_login.login_required
-def detail():
-    return render_template('detail.html')
-
-
-@app.route('/api', methods=['GET'])
-@flask_login.login_required
-def api():
-    return jsonify({'value': random.random(), 'timestamp': int(time.time())})
 
 
 # 文件下载
@@ -361,33 +262,6 @@ def delete_file():
 
     else:
         return jsonify({'code': -1, 'msg': 'Method not allowed'})
-
-
-@app.route('/add', methods=['POST'])
-def add_monitor():
-    if request.method == 'POST':
-        logger.debug('form data is : %s' % request.form)
-        try:
-            # # if request data is 'application/x-www-form-urlencoded'
-            # util.add_monitor(request.form)
-            # if request data is 'application/json'
-            util.add_monitor(request.get_data())
-            # util.add_monitor(request.data)
-            return jsonify({'code': 0, 'msg': ''})
-        except Exception as e:
-            logger.debug("add monitor error %s" % e)
-            return jsonify({'code': -1, 'msg': 'Add monitor error'})
-    else:
-        return jsonify({'code': -1, 'msg': 'Method not allowed'})
-
-
-@app.route('/blueprint/<string:name>', methods=['GET'])
-def blueprint(name):
-    if name == 'r':
-        logger.debug('"style.css" url is "%s"' % url_for('resource.static', filename='css/style.css'))
-        return jsonify({'name': 'style.css', 'url': url_for('resource.static', filename='css/style.css')})
-    else:
-        pass
 
 
 app.secret_key = 'aHR0cDovL3d3dy53YW5kYS5jbi8='

@@ -10,8 +10,9 @@ import OrderTrackLogger
 
 from models.Base import *
 from models.User import User
-from models.LogisticalInfo import LogisticalInfo
-
+from KuaiDiCX.ShipperMap import SHIPPER_MAP, getLogisticalState
+from models.LogisticsInfo import LogisticsInfo
+from SyncLogistics import *
 
 reload(sys)
 sys.setdefaultencoding("utf8")
@@ -136,36 +137,36 @@ def creatDefaultUser():
         return None
     
     
-#添加记录到数据库，返回 true , 或者 false 
-def addRecord(record):
+#添加记录到数据库，返回 true , 或者 false
+def addRecord(logisticsInfo):
     dictT = {}
-    tmpRecord = db_session.query(LogisticalInfo).filter_by(logisticCode = record.logisticCode).first()
-    dictT['logisticCode'] = record.logisticCode
-    print record
-    if tmpRecord and tmpRecord.deleted == 0:
+    tmpLogisticalInfo = db_session.query(LogisticsInfo).filter_by(logisticsCode = logisticsInfo.logisticsCode).first()
+    dictT['logisticsCode'] = logisticsInfo.logisticsCode
+    print logisticsInfo
+    if tmpLogisticalInfo and tmpLogisticalInfo.deleted == 0:
         dictT['result'] = 'fail'
         dictT['reason'] = u'已经存在该快递编号'
         dictT['code'] = -1
     else :
-        if tmpRecord:
-            tmpRecord.updateFrom(record)
-            tmpRecord.deleted = 0;
-            db_session.add(tmpRecord)
+        if tmpLogisticalInfo:
+            tmpLogisticalInfo.updateFrom(logisticsInfo)
+            tmpLogisticalInfo.deleted = 0;
+            db_session.add(tmpLogisticalInfo)
         else:
-            db_session.add(record)
+            db_session.add(logisticsInfo)
         id = db_session.commit()
         dictT['result'] = 'success'
         dictT['reason'] = ''
         dictT['id'] = id
         dictT['code'] = 1
         dictT['url'] = '/index'
-        
+    
     return dictT
 
 def delRecord(logistic_Code):
     print ("delRecord")
     dictT = {}
-    tmpRecord = db_session.query(LogisticalInfo).filter_by(logisticCode = logistic_Code).first()
+    tmpRecord = db_session.query(LogisticsInfo).filter_by(logisticsCode = logistic_Code).first()
     if tmpRecord:
         tmpRecord.deleted = 1
         db_session.add(tmpRecord)
@@ -177,16 +178,16 @@ def delRecord(logistic_Code):
         dictT['reason'] = u'不存在该快递编号!'
 
     print tmpRecord
-    
+
     return dictT
 
-
-def updateRecord(recordDict):
+#根据现有的 LogisticsInfo 来更新数据，
+def updateRecord(logisticsInfo):
     print ("updateRecord")
     dictT = {}
-    tmpRecord = db_session.query(LogisticalInfo).filter_by(logisticCode = recordDict.logisticCode).first()
+    tmpRecord = db_session.query(LogisticsInfo).filter_by(logisticsCode = logisticsInfo.logisticsCode).first()
     if tmpRecord:
-        tmpRecord.updateFrom(recordDict)
+        tmpRecord.updateFrom(logisticsInfo)
         db_session.add(tmpRecord)
         id = db_session.commit()
         dictT['code'] = 1
@@ -199,12 +200,14 @@ def updateRecord(recordDict):
     
     return dictT
 
+#根据 dict 类型的数据，来更新数据库
 def modifyRecord(tDict):
     print ("modifyRecord")
+    print("tDict=%s"%(tDict))
     dictT = {}
     tmpRecord = None
-    if tDict.has_key("logisticCode") == True:
-        tmpRecord = db_session.query(LogisticalInfo).filter_by(logisticCode = tDict["logisticCode"]).first()
+    if tDict.has_key("logisticsCode") == True:
+        tmpRecord = db_session.query(LogisticsInfo).filter_by(logisticsCode = tDict["logisticsCode"]).first()
     if tmpRecord:
         tmpRecord.updateFromDict(tDict)
         db_session.add(tmpRecord)
@@ -213,7 +216,7 @@ def modifyRecord(tDict):
     else:
         dictT['code'] = -1
         dictT['result'] = 'fail'
-        dictT['reason'] = u'不存在该用户!'
+        dictT['reason'] = u'不存在该快递记录!'
 
     print tmpRecord
     
@@ -222,14 +225,20 @@ def modifyRecord(tDict):
 
 #读取没有被标记为删除的项目
 def getAllExistData():
-    record = db_session.query(LogisticalInfo).filter(LogisticalInfo.deleted == 0).filter_by().all()
+    record = db_session.query(LogisticsInfo).filter(LogisticsInfo.deleted == 0).filter_by().all()
     return record
+
 
 #读取快递信息未完成的项目
 def getAllNeedSyncLogistical():
-    record = db_session.query(LogisticalInfo).filter(LogisticalInfo.logisticsState != 3).filter(LogisticalInfo.deleted == 0).filter_by().all()
+    record = db_session.query(LogisticsInfo).filter(LogisticsInfo.logisticsState != 3).filter(LogisticsInfo.deleted == 0).filter_by().all()
     return record
 
+
+#读取快递信息未完成的项目
+def getNeedSyncLogistical(logisticsCode):
+    record = db_session.query(LogisticsInfo).filter(LogisticsInfo.logisticsCode == logisticsCode).filter_by().all()
+    return record
 
 
 
