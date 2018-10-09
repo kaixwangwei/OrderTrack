@@ -65,12 +65,7 @@ def get_user(user_id):
 def get_user_session(user_id):
     try:
         print("get_user_session user_id:%s"%(user_id))
-        session = sessionmaker()
-        session.configure(bind=engine)
-        Base.metadata.create_all(engine)
-        s = session()
-
-        ret = s.query(User).filter_by(username=user_id).first()
+        ret = db_session.query(User).filter_by(username=user_id).first()
         return ret
     except Exception as e:
         logger.debug("get_user_session Exception is %s" % e)

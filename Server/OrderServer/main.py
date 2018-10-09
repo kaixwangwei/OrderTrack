@@ -269,4 +269,4 @@ app.secret_key = 'aHR0cDovL3d3dy53YW5kYS5jbi8='
 if __name__ == '__main__':
     # print(type(flask_db.get_user('admin')))
     # print(flask_db.get_user('admin'))
-    app.run(host='0.0.0.0', port=9000, debug=True)
+    app.run(host='0.0.0.0', port=9000)

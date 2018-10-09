@@ -20,7 +20,7 @@ user_orm_url = SQLALCHEMY_DATABASE_URI
 
 db = SQLAlchemy()
 
-engine = create_engine(user_orm_url, convert_unicode=True)
+engine = create_engine(user_orm_url, convert_unicode=True, pool_size=100, max_overflow=100)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
