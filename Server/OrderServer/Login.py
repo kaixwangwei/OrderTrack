@@ -52,7 +52,7 @@ def loginFunc():
                 # set login user
                 print("admin login success")
                 user = setUserByDict(username, tmpUser)
-                flask_login.login_user(user)
+                flask_login.login_user(user,remember=True)
     
                 resp = make_response(render_template('index.html', shipperMap = SHIPPER_MAP))
                 resp.set_cookie('username', username)
