@@ -23,7 +23,7 @@ class LogisticsInfo(db.Model):
     update_time = Column( String(128))
     logisticsUpdateTime = Column( String(128))
     deleted = Column( Integer, nullable=False)
-
+   
     def __init__(self,logisticsCode, shipperCode, receiver, shipDate, creater, shippingMoney, logisticsInfo, create_time, update_time, logisticsUpdateTime = "", deleted=0):
         self.logisticsCode = logisticsCode
         self.shipperCode = shipperCode

@@ -20,17 +20,14 @@ logger = OrderTrackLogger.get_logger(__name__)
 
 
 @operation.route("/getdata", methods=['GET','POST'])
-#@flask_login.login_required
 def getdata():
     print("operation getdata")
-    
+
     resultDict = {}
-    dataList = []
 
     #同步一次物流信息
     SyncLogistics.startQueryAllLogistical()
     resultDict = LogisticsHelp.getAllExistJsonData()
-    
 
     if request.method == 'GET':
         #print json.dumps(resultDict)
@@ -40,7 +37,6 @@ def getdata():
 
 
 
-@flask_login.login_required
 @operation.route('/addnew', methods=['GET', 'POST'])
 def addnew():
     if request.method == 'GET':

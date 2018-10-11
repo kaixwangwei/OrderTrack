@@ -62,15 +62,14 @@ def get_user(user_id):
 
 # for login
 # SQLAlchemy orm
-def get_user_session(user_id):
+def get_user_for_login(user_id):
     try:
-        print("get_user_session user_id:%s"%(user_id))
+        print("get_user_for_login user_id:%s"%(user_id))
         ret = db_session.query(User).filter_by(username=user_id).first()
         return ret
     except Exception as e:
-        logger.debug("get_user_session Exception is %s" % e)
+        logger.debug("get_user_for_login Exception is %s" % e)
         return None
-
 
 # get connection session
 def get_connection_session(url=user_orm_url):
@@ -238,6 +237,17 @@ def getNeedSyncLogistical(logisticsCode):
 
 
 ###########################用户相关
+
+def getUserInfo(username):
+    try:
+        #print("getUserInfo username:%s"%(username))
+        ret = db_session.query(User).filter_by(username=username).first()
+        return ret
+    except Exception as e:
+        logger.debug("getUserInfo Exception is %s" % e)
+        return None
+    
+    
 def getAllUsers():
     users = db_session.query(User).filter_by().all()
     return users

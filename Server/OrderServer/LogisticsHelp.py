@@ -38,7 +38,7 @@ def creatLogisticalInfo(logisticsInfo, logisticsUpdateTime):
     return retStr
 
 def getFullName(username):
-    tmpUser = OrderTrackDB.get_user_session(username)
+    tmpUser = OrderTrackDB.getUserInfo(username)
     if tmpUser == None:
         return None
     

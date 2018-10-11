@@ -2,8 +2,9 @@
 
 import time
 import json
+import datetime
 from flask import Blueprint, render_template, jsonify, send_from_directory
-from flask import Flask, redirect, url_for, request, make_response, abort
+from flask import Flask, redirect, url_for, request, make_response, abort, session
 import flask_login
 
 from KuaiDiCX.ShipperMap import SHIPPER_MAP, getLogisticalState
@@ -30,7 +31,7 @@ def setUserByDict(username, tmpUser):
     else:
         user.fullname = tmpUser.fullname
     user.role = tmpUser.role
-    print("user.fullname = %s, user.role = %s"%(user.fullname, user.role))
+    print("[setUserByDict]user.fullname = %s, user.role = %s"%(user.fullname, user.role))
     return user
 
 
@@ -41,7 +42,7 @@ def loginFunc():
         username = request.form['username']
         password = request.form['password']
 
-        tmpUser = OrderTrackDB.get_user_session(username)
+        tmpUser = OrderTrackDB.get_user_for_login(username)
         if tmpUser != None:
             logger.debug('db user id is %s, detail is %s' % (tmpUser.username, tmpUser))
 
@@ -52,8 +53,9 @@ def loginFunc():
                 # set login user
                 print("admin login success")
                 user = setUserByDict(username, tmpUser)
+                session.permanent = True                
                 flask_login.login_user(user,remember=True)
-    
+                
                 resp = make_response(render_template('index.html', shipperMap = SHIPPER_MAP))
                 resp.set_cookie('username', username)
                 if not is_safe_url(next_url):

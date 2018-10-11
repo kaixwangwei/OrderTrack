@@ -2,7 +2,7 @@
 
 import time
 import json
-from flask import Blueprint, render_template, jsonify, send_from_directory
+from flask import Response, Blueprint, render_template, jsonify, send_from_directory
 from flask import Flask, redirect, url_for, request, make_response, abort
 import flask_login
 
@@ -21,5 +21,5 @@ index = Blueprint('index', __name__, template_folder='index')
 @flask_login.login_required
 def indexFunc():
     logger.debug("index page, method is %s " % request.method)
-    print("user fullename :%s"%flask_login.current_user.fullname)
+    print("[indexFunc]user fullname :%s"%flask_login.current_user.fullname)
     return render_template('index.html', shipperMap = SHIPPER_MAP)

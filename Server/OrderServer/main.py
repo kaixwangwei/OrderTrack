@@ -4,6 +4,7 @@ import json
 import os
 import random
 import time
+import datetime
 from flask_sqlalchemy import SQLAlchemy
 import flask_login
 from flask_migrate import Migrate,MigrateCommand
@@ -13,6 +14,7 @@ from flask import Flask, redirect, url_for, request, render_template, make_respo
 from flask_login import LoginManager
 from flask_restful import Api
 from flask_uploads import UploadSet, configure_uploads
+from gevent import pywsgi
 
 from models.Base import db
 from models.LogisticsInfo import LogisticsInfo
@@ -70,7 +72,7 @@ app.register_blueprint(login)
 def setUser(username):
     user = User()
     print("setUser username:%s"%(username))
-    tmpUser = OrderTrackDB.get_user_session(username)
+    tmpUser = OrderTrackDB.get_user_for_login(username)
     if tmpUser == None:
         return None
     user.id = username
@@ -80,7 +82,7 @@ def setUser(username):
     else:
         user.fullname = tmpUser.fullname
     user.role = tmpUser.role
-    print("user.fullname = %s, user.role = %s"%(user.fullname, user.role))
+    print("[setUser]user.fullname = %s, user.role = %s"%(user.fullname, user.role))
     return user
 
 @login_manager.user_loader
@@ -267,6 +269,9 @@ def delete_file():
 app.secret_key = 'aHR0cDovL3d3dy53YW5kYS5jbi8='
 
 if __name__ == '__main__':
-    # print(type(flask_db.get_user('admin')))
-    # print(flask_db.get_user('admin'))
-    app.run(host='0.0.0.0', port=9000)
+    #print(type(flask_db.get_user('admin')))
+    #print(flask_db.get_user('admin'))
+    #app.run(host='0.0.0.0', port=9000, debug=True)
+    server = pywsgi.WSGIServer(('127.0.0.1', 9000), app)
+    server.serve_forever()
+    
