@@ -272,6 +272,6 @@ if __name__ == '__main__':
     #print(type(flask_db.get_user('admin')))
     #print(flask_db.get_user('admin'))
     #app.run(host='0.0.0.0', port=9000, debug=True)
-    server = pywsgi.WSGIServer(('127.0.0.1', 9000), app)
+    server = pywsgi.WSGIServer(('0.0.0.0', 9000), app)
     server.serve_forever()
     

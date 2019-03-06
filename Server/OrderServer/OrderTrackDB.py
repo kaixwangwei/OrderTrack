@@ -65,7 +65,11 @@ def get_user(user_id):
 def get_user_for_login(user_id):
     try:
         print("get_user_for_login user_id:%s"%(user_id))
-        ret = db_session.query(User).filter_by(username=user_id).first()
+        try:
+            ret = db_session.query(User).filter_by(username=user_id).first()
+        except:
+            db_session.rollback()
+
         return ret
     except Exception as e:
         logger.debug("get_user_for_login Exception is %s" % e)
